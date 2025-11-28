@@ -3,331 +3,225 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Youmio Season 1 Invite - Demo</title>
+  <title>Youmio Season 1 Invite</title>
+  <meta name="description" content="You've been invited to Youmio Season 1. Claim your access now.">
+  <meta property="og:title" content="You're Invited to Youmio Season 1">
+  <meta property="og:description" content="Claim your spot and start earning Affinity.">
+  <link rel="icon" href="https://youmio.ai/favicon.ico">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: #0a0a0f; min-height: 100vh; }
-    .demo-banner { background: linear-gradient(to right, rgba(236,72,153,0.2), rgba(168,85,247,0.2)); border-bottom: 1px solid rgba(236,72,153,0.3); padding: 8px 16px; text-align: center; }
-    .demo-banner p { color: #f9a8d4; font-size: 14px; }
-    .header { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 16px 24px; }
-    .header-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; }
-    .logo { display: flex; align-items: center; gap: 8px; }
-    .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #ec4899, #9333ea); border-radius: 8px; }
-    .logo-text { color: white; font-weight: 600; font-size: 20px; }
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    .invite-btn { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: linear-gradient(to right, rgba(236,72,153,0.2), rgba(168,85,247,0.2)); border: 1px solid rgba(236,72,153,0.3); color: #f9a8d4; font-weight: 500; border-radius: 12px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-    .invite-btn:hover { background: linear-gradient(to right, rgba(236,72,153,0.3), rgba(168,85,247,0.3)); }
-    .wallet-badge { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 8px 12px; }
-    .wallet-dot { width: 20px; height: 20px; background: #22c55e; border-radius: 6px; }
-    .wallet-text { color: white; font-size: 14px; font-family: monospace; }
-    .stats { display: flex; align-items: center; gap: 16px; font-size: 14px; color: #9ca3af; }
-    .main { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
-    .hero-title { font-size: 36px; font-weight: bold; color: white; margin-bottom: 16px; text-align: center; }
-    .hero-sub { font-size: 18px; color: #9ca3af; text-align: center; margin-bottom: 48px; }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 700px; margin: 0 auto; }
-    .card { background: #16161f; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px; text-align: center; }
-    .card-icon { width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.2)); border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
-    .card-title { color: white; font-weight: 500; margin-bottom: 4px; }
-    .card-sub { color: #6b7280; font-size: 14px; }
-    .cta-wrap { text-align: center; margin-top: 48px; }
-    .cta-btn { padding: 12px 32px; background: linear-gradient(to right, #ec4899, #db2777); color: white; font-weight: 500; border-radius: 12px; border: none; cursor: pointer; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
-    .cta-btn:hover { filter: brightness(1.1); }
-    .popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
-    .popup-overlay.active { display: flex; }
-    .popup-container { position: relative; width: 100%; max-width: 440px; }
-    .popup-close { position: absolute; top: -40px; right: 0; background: none; border: none; color: rgba(255,255,255,0.6); font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-    .popup-close:hover { color: white; }
-    .popup-card { background: #16161f; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; }
-    .glow { position: absolute; width: 200px; height: 200px; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: -1; }
-    .glow-1 { top: -50px; left: -50px; background: rgba(236,72,153,0.15); }
-    .glow-2 { bottom: -50px; right: -50px; background: rgba(168,85,247,0.15); }
-    .popup-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-    .popup-icon { width: 44px; height: 44px; background: linear-gradient(135deg, #ec4899, #9333ea); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .popup-title { color: white; font-size: 18px; font-weight: 600; }
-    .popup-subtitle { color: #f9a8d4; font-size: 13px; margin-top: 2px; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #0a0a0f; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .glow { position: fixed; width: 300px; height: 300px; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
+    .glow-1 { top: 20%; left: 20%; background: rgba(236,72,153,0.15); }
+    .glow-2 { bottom: 20%; right: 20%; background: rgba(168,85,247,0.15); }
+    .card { position: relative; z-index: 1; width: 100%; max-width: 420px; background: rgba(22,22,31,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; }
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .icon { width: 44px; height: 44px; background: linear-gradient(135deg, #ec4899, #9333ea); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .title { color: white; font-size: 18px; font-weight: 600; }
+    .subtitle { color: #9ca3af; font-size: 13px; margin-top: 2px; }
+    .invite-count { color: #f9a8d4; }
+    .inviter-box { padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; }
+    .inviter-label { color: #9ca3af; font-size: 13px; margin-bottom: 4px; }
+    .inviter-addr { color: white; font-family: monospace; font-size: 15px; }
     .info-box { padding: 14px; background: linear-gradient(to right, rgba(236,72,153,0.1), rgba(168,85,247,0.1)); border: 1px solid rgba(236,72,153,0.2); border-radius: 10px; margin-bottom: 20px; }
     .info-text { color: #d1d5db; font-size: 13px; line-height: 1.5; }
     .label { display: block; color: #9ca3af; font-size: 13px; margin-bottom: 8px; }
+    .input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; color: white; font-size: 14px; font-family: monospace; outline: none; margin-bottom: 6px; }
+    .input:focus { border-color: rgba(236,72,153,0.5); }
+    .input::placeholder { color: #6b7280; }
+    .error { color: #f87171; font-size: 13px; margin-bottom: 10px; display: none; }
+    .error.show { display: block; }
+    .btn { width: 100%; padding: 14px; background: linear-gradient(to right, #ec4899, #db2777); border: none; color: white; font-weight: 600; font-size: 15px; border-radius: 10px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn:hover { filter: brightness(1.1); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.15); filter: none; }
     .link-row { display: flex; gap: 8px; margin-bottom: 16px; }
     .link-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; color: white; font-size: 11px; font-family: monospace; outline: none; }
     .copy-btn { padding: 12px 14px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; cursor: pointer; font-size: 16px; transition: all 0.2s; }
     .copy-btn:hover { background: rgba(255,255,255,0.2); }
     .copy-btn.copied { background: rgba(34,197,94,0.2); border-color: rgba(34,197,94,0.3); color: #4ade80; }
     .btn-row { display: flex; gap: 10px; }
-    .btn { flex: 1; padding: 12px; border-radius: 10px; font-weight: 500; font-size: 14px; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .btn-half { flex: 1; padding: 12px; border-radius: 10px; font-weight: 500; font-size: 14px; cursor: pointer; transition: all 0.2s; text-align: center; border: none; }
     .btn-twitter { background: rgba(29,161,242,0.15); border: 1px solid rgba(29,161,242,0.3); color: #1DA1F2; }
     .btn-twitter:hover { background: rgba(29,161,242,0.25); }
-    .btn-primary { background: linear-gradient(to right, #ec4899, #db2777); border: none; color: white; }
-    .btn-primary:hover { filter: brightness(1.1); }
-    .btn-secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: white; }
-    .btn-secondary:hover { background: rgba(255,255,255,0.15); }
-    .inviter-box { padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; }
-    .inviter-label { color: #9ca3af; font-size: 13px; margin-bottom: 4px; }
-    .inviter-addr { color: white; font-family: monospace; font-size: 15px; }
-    .input-full { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; color: white; font-size: 14px; font-family: monospace; outline: none; margin-bottom: 6px; }
-    .input-full:focus { border-color: rgba(236,72,153,0.5); }
-    .hint { color: #6b7280; font-size: 11px; margin-bottom: 14px; }
-    .error { color: #f87171; font-size: 13px; margin-bottom: 10px; display: none; }
-    .error.show { display: block; }
     .success-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #4ade80, #16a34a); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
     .success-title { color: white; font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 8px; }
     .success-text { color: #9ca3af; font-size: 14px; text-align: center; margin-bottom: 20px; line-height: 1.5; }
-    .wallet-box { padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 20px; text-align: left; }
+    .wallet-box { padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 20px; }
     .status-icon { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; }
     .status-icon.warning { background: rgba(234,179,8,0.2); }
     .status-icon.error { background: rgba(239,68,68,0.2); }
+    .spinner { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .view { display: none; }
     .view.active { display: block; }
-    .demo-controls { margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
-    .demo-label { color: #6b7280; font-size: 11px; margin-bottom: 8px; }
-    .demo-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-    .demo-btn { padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; font-size: 11px; }
-    .demo-btn.success { background: rgba(34,197,94,0.2); color: #4ade80; }
-    .demo-btn.warning { background: rgba(234,179,8,0.2); color: #facc15; }
-    .demo-btn.err { background: rgba(239,68,68,0.2); color: #f87171; }
-    .demo-btn.info { background: rgba(59,130,246,0.2); color: #60a5fa; }
-    .dev-note { max-width: 500px; margin: 60px auto 0; padding: 20px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 12px; }
-    .dev-note p { color: #93c5fd; font-size: 14px; margin-bottom: 12px; }
-    .dev-note span { color: #9ca3af; font-size: 13px; line-height: 1.6; display: block; }
-    .dev-note code { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; color: #f9a8d4; }
-    @media (max-width: 600px) {
-      .grid { grid-template-columns: 1fr; max-width: 300px; }
-      .header-inner { flex-wrap: wrap; gap: 12px; }
-      .header-right { width: 100%; justify-content: space-between; }
-      .stats { display: none; }
-      .hero-title { font-size: 28px; }
-      .hero-sub { font-size: 16px; }
-      .demo-banner p { font-size: 12px; }
-      .popup-card { padding: 20px; }
+    .loading-view { text-align: center; padding: 40px 20px; }
+    .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(236,72,153,0.3); border-top-color: #ec4899; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+    .loading-text { color: #9ca3af; font-size: 14px; }
+    @media (max-width: 480px) {
+      .card { padding: 20px; }
       .btn-row { flex-direction: column; }
     }
   </style>
 </head>
 <body>
-  <div class="demo-banner">
-    <p>🎭 <strong>DEMO: youmio.ai</strong> - Click the Invite button to see the popup</p>
-  </div>
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
 
-  <header class="header">
-    <div class="header-inner">
-      <div class="logo">
-        <div class="logo-icon"></div>
-        <span class="logo-text">youmio</span>
-      </div>
-      <div class="header-right">
-        <button class="invite-btn" id="invite-btn-header">
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
-          Invite
-        </button>
-        <div class="wallet-badge">
-          <div class="wallet-dot"></div>
-          <span class="wallet-text">0x6117...E6e8</span>
-        </div>
-        <div class="stats">
-          <span>💎 2.1k</span>
-          <span>⭐ 2.2k</span>
-        </div>
+  <div class="card">
+    <!-- Loading State -->
+    <div id="view-loading" class="view active">
+      <div class="loading-view">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading invite...</p>
       </div>
     </div>
-  </header>
 
-  <main class="main">
-    <h1 class="hero-title">Season 1 is Coming</h1>
-    <p class="hero-sub">You're allowlisted! Invite a friend to join you.</p>
-    <div class="grid">
-      <div class="card">
-        <div class="card-icon">👽</div>
-        <p class="card-title">LIMBO</p>
-        <p class="card-sub">Mio Character</p>
+    <!-- Share View (for inviter accessing their own link) -->
+    <div id="view-share" class="view">
+      <div class="header">
+        <div class="icon">
+          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+        </div>
+        <div>
+          <div class="title">Invite a Friend to Season 1</div>
+          <div class="subtitle invite-count" id="invite-count">Loading...</div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card-icon">🧘</div>
-        <p class="card-title">SATOSHI</p>
-        <p class="card-sub">Mio Character</p>
+      <div class="info-box">
+        <p class="info-text">Share your invite link with a friend and gift them access. Once they submit their wallet, they'll be added to the Season 1 allowlist (may take a few hours).</p>
       </div>
-      <div class="card">
-        <div class="card-icon">😺</div>
-        <p class="card-title">MEOW</p>
-        <p class="card-sub">Mio Character</p>
+      <label class="label">Your invite link</label>
+      <div class="link-row">
+        <input type="text" class="link-input" id="share-link" readonly>
+        <button class="copy-btn" id="copy-btn">📋</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn-half btn-twitter" id="twitter-btn">Share on X</button>
+        <button class="btn-half btn" id="goto-youmio-btn">Go to Youmio</button>
       </div>
     </div>
-    <div class="cta-wrap">
-      <button class="cta-btn" id="invite-btn-main">
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
-        Invite a Friend to Season 1
-      </button>
-    </div>
-    <div class="dev-note">
-      <p>👨‍💻 <strong>Dev Integration Note:</strong></p>
-      <span>The only code needed on youmio.ai is a button that opens:<br><code>https://invite.youmio.ai/ref/{walletAddress}</code><br><br>Everything else is handled by the external invite site.</span>
-    </div>
-  </main>
 
-  <!-- Popup Overlay -->
-  <div class="popup-overlay" id="popup-overlay">
-    <div class="popup-container">
-      <div class="glow glow-1"></div>
-      <div class="glow glow-2"></div>
-      <button class="popup-close" id="popup-close">✕ Close</button>
-      
-      <div class="popup-card">
-        <!-- SHARE VIEW -->
-        <div id="view-share" class="view active">
-          <div class="popup-header">
-            <div class="popup-icon">
-              <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
-            </div>
-            <div>
-              <div class="popup-title">Invite a Friend to Season 1</div>
-              <div class="popup-subtitle">4/5 Invites Remaining</div>
-            </div>
-          </div>
-          <div class="info-box">
-            <p class="info-text">Share your invite link with a friend and gift them access. Once they submit their wallet, they'll be added to the Season 1 allowlist (may take a few hours).</p>
-          </div>
-          <label class="label">Your invite link</label>
-          <div class="link-row">
-            <input type="text" class="link-input" id="link-input" value="https://invite.youmio.ai/ref/0x6117...E6e8" readonly>
-            <button class="copy-btn" id="copy-btn">📋</button>
-          </div>
-          <div class="btn-row">
-            <button class="btn btn-twitter" id="twitter-btn">Share on X</button>
-            <button class="btn btn-primary" id="preview-btn">Preview as Friend →</button>
-          </div>
-          <div class="demo-controls">
-            <div class="demo-label">Demo: Switch views</div>
-            <div class="demo-btns">
-              <button class="demo-btn info" id="demo-claim">Claim Form</button>
-              <button class="demo-btn success" id="demo-success">Success</button>
-              <button class="demo-btn warning" id="demo-used">Used</button>
-              <button class="demo-btn err" id="demo-invalid">Invalid</button>
-            </div>
-          </div>
+    <!-- Claim View (for invitee) -->
+    <div id="view-claim" class="view">
+      <div class="header">
+        <div class="icon">
+          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
         </div>
-
-        <!-- CLAIM VIEW -->
-        <div id="view-claim" class="view">
-          <div class="popup-header">
-            <div class="popup-icon">
-              <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
-            </div>
-            <div>
-              <div class="popup-title">Youmio App Season 1 Invite</div>
-              <div class="popup-subtitle" style="color: #9ca3af;">You've been invited to Youmio</div>
-            </div>
-          </div>
-          <div class="inviter-box">
-            <div class="inviter-label">Invited by</div>
-            <div class="inviter-addr">0x6117...E6e8</div>
-          </div>
-          <label class="label">Your Wallet Address</label>
-          <input type="text" id="wallet-input" class="input-full" placeholder="0x...">
-          <p id="error-msg" class="error"></p>
-          <p class="hint">Try: 0x1234567890abcdef1234567890abcdef12345678</p>
-          <button class="btn btn-primary" style="width: 100%;" id="submit-btn">Claim Your Access</button>
-          <div class="info-box" style="margin-top: 16px; margin-bottom: 0;">
-            <p class="info-text">ℹ️ Season 1 is invite-only. Once allowlisted, you'll be able to earn Affinity which will unlock Youmio Ecosystem Rewards.</p>
-          </div>
-          <div class="demo-controls">
-            <div class="demo-label">Demo: Switch views</div>
-            <div class="demo-btns">
-              <button class="demo-btn info" id="demo-share2">Share View</button>
-              <button class="demo-btn success" id="demo-success2">Success</button>
-              <button class="demo-btn warning" id="demo-used2">Used</button>
-              <button class="demo-btn err" id="demo-invalid2">Invalid</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- SUCCESS VIEW -->
-        <div id="view-success" class="view">
-          <div class="success-icon">
-            <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-          </div>
-          <div class="success-title">Access Claimed!</div>
-          <p class="success-text">Your wallet will be added to the Season 1 allowlist. This might take a few hours to activate.</p>
-          <div class="wallet-box">
-            <div class="inviter-label">Your wallet</div>
-            <div class="inviter-addr" id="success-wallet" style="font-size: 13px; word-break: break-all;"></div>
-          </div>
-          <button class="btn btn-primary" style="width: 100%;" id="goto-btn">Go to Youmio</button>
-        </div>
-
-        <!-- USED VIEW -->
-        <div id="view-used" class="view">
-          <div class="status-icon warning">⚠️</div>
-          <div class="success-title">Invite Already Used</div>
-          <p class="success-text">This invite link has already been claimed. Ask your friend for another invite.</p>
-          <button class="btn btn-secondary" style="width: 100%;" id="back-used">Back to Demo</button>
-        </div>
-
-        <!-- INVALID VIEW -->
-        <div id="view-invalid" class="view">
-          <div class="status-icon error">❌</div>
-          <div class="success-title">Invalid Invite</div>
-          <p class="success-text">This invite link is not valid. Please check the link or request a new one.</p>
-          <button class="btn btn-secondary" style="width: 100%;" id="back-invalid">Back to Demo</button>
+        <div>
+          <div class="title">Youmio App Season 1 Invite</div>
+          <div class="subtitle">You've been invited to Youmio</div>
         </div>
       </div>
+      <div class="inviter-box">
+        <div class="inviter-label">Invited by</div>
+        <div class="inviter-addr" id="inviter-display">0x6117...E6e8</div>
+      </div>
+      <label class="label">Your Wallet Address</label>
+      <input type="text" id="wallet-input" class="input" placeholder="0x...">
+      <p id="error-msg" class="error"></p>
+      <button class="btn" id="submit-btn">Claim Your Access</button>
+      <div class="info-box" style="margin-top: 16px;">
+        <p class="info-text">ℹ️ Season 1 is invite-only. Once allowlisted, you'll be able to earn Affinity which will unlock Youmio Ecosystem Rewards.</p>
+      </div>
+    </div>
+
+    <!-- Success View -->
+    <div id="view-success" class="view">
+      <div class="success-icon">
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <div class="success-title">Access Claimed!</div>
+      <p class="success-text">Your wallet will be added to the Season 1 allowlist. This might take a few hours to activate.</p>
+      <div class="wallet-box">
+        <div class="inviter-label">Your wallet</div>
+        <div class="inviter-addr" id="success-wallet" style="font-size: 13px; word-break: break-all;"></div>
+      </div>
+      <a href="https://youmio.ai" class="btn" style="text-decoration: none;">Go to Youmio</a>
+    </div>
+
+    <!-- Used View -->
+    <div id="view-used" class="view" style="text-align: center;">
+      <div class="status-icon warning">⚠️</div>
+      <div class="success-title">Invite Already Used</div>
+      <p class="success-text">This invite link has already been claimed. Ask your friend for another invite or wait for public access.</p>
+      <a href="https://youmio.ai" class="btn btn-secondary" style="text-decoration: none;">Visit Youmio</a>
+    </div>
+
+    <!-- Invalid View -->
+    <div id="view-invalid" class="view" style="text-align: center;">
+      <div class="status-icon error">❌</div>
+      <div class="success-title">Invalid Invite</div>
+      <p class="success-text">This invite link is not valid. Please check the link or request a new one.</p>
+      <a href="https://youmio.ai" class="btn btn-secondary" style="text-decoration: none;">Visit Youmio</a>
+    </div>
+
+    <!-- Error View -->
+    <div id="view-error" class="view" style="text-align: center;">
+      <div class="status-icon error">⚠️</div>
+      <div class="success-title">Something Went Wrong</div>
+      <p class="success-text">Please try again later or contact support.</p>
+      <a href="https://youmio.ai" class="btn btn-secondary" style="text-decoration: none;">Visit Youmio</a>
     </div>
   </div>
 
   <script>
-    // Elements
-    var popupOverlay = document.getElementById('popup-overlay');
-    var popupClose = document.getElementById('popup-close');
-    var inviteBtnHeader = document.getElementById('invite-btn-header');
-    var inviteBtnMain = document.getElementById('invite-btn-main');
-    var copyBtn = document.getElementById('copy-btn');
-    var twitterBtn = document.getElementById('twitter-btn');
-    var previewBtn = document.getElementById('preview-btn');
-    var submitBtn = document.getElementById('submit-btn');
-    var walletInput = document.getElementById('wallet-input');
-    var errorMsg = document.getElementById('error-msg');
-    var gotoBtn = document.getElementById('goto-btn');
+    var inviterAddress = '';
+    var inviterShort = '';
 
-    // Show/hide popup
-    function openPopup() {
-      popupOverlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
+    function getInviterFromUrl() {
+      var path = window.location.pathname;
+      var match = path.match(/\/ref\/(0x[a-fA-F0-9]{40})/i);
+      return match ? match[1] : null;
     }
 
-    function closePopup() {
-      popupOverlay.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-
-    // View switching
     function showView(viewName) {
-      var views = ['share', 'claim', 'success', 'used', 'invalid'];
+      var views = ['loading', 'share', 'claim', 'success', 'used', 'invalid', 'error'];
       views.forEach(function(v) {
-        document.getElementById('view-' + v).classList.remove('active');
+        var el = document.getElementById('view-' + v);
+        if (el) el.classList.remove('active');
       });
-      document.getElementById('view-' + viewName).classList.add('active');
+      var target = document.getElementById('view-' + viewName);
+      if (target) target.classList.add('active');
     }
 
-    // Copy link
-    function copyLink() {
-      var linkInput = document.getElementById('link-input');
-      navigator.clipboard.writeText('https://invite.youmio.ai/ref/0x6117a3c9e8EA2e68B6C829b6F2e8EcE668E6e8Ab');
-      copyBtn.textContent = '✓';
-      copyBtn.classList.add('copied');
-      setTimeout(function() {
-        copyBtn.textContent = '📋';
-        copyBtn.classList.remove('copied');
-      }, 2000);
+    async function checkInvite() {
+      inviterAddress = getInviterFromUrl();
+
+      if (!inviterAddress) {
+        showView('invalid');
+        return;
+      }
+
+      inviterShort = inviterAddress.slice(0, 6) + '...' + inviterAddress.slice(-4);
+
+      try {
+        var response = await fetch('/.netlify/functions/check-invite?inviter=' + inviterAddress);
+        var data = await response.json();
+
+        if (data.valid) {
+          document.getElementById('inviter-display').textContent = data.inviter;
+          document.getElementById('invite-count').textContent = data.invitesRemaining + '/5 Invites Remaining';
+          document.getElementById('share-link').value = window.location.href;
+          showView('claim');
+        } else if (data.reason === 'no_invites') {
+          showView('used');
+        } else {
+          showView('invalid');
+        }
+      } catch (err) {
+        console.error('Error checking invite:', err);
+        showView('error');
+      }
     }
 
-    // Share to Twitter
-    function shareTwitter() {
-      var text = encodeURIComponent("I'm in Youmio Season 1! Join me and start earning Affinity 🚀");
-      var url = encodeURIComponent('https://invite.youmio.ai/ref/0x6117a3c9e8EA2e68B6C829b6F2e8EcE668E6e8Ab');
-      window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
-    }
-
-    // Submit wallet
-    function submitWallet() {
+    async function submitWallet() {
+      var walletInput = document.getElementById('wallet-input');
+      var errorMsg = document.getElementById('error-msg');
+      var submitBtn = document.getElementById('submit-btn');
       var wallet = walletInput.value.trim();
+
       errorMsg.classList.remove('show');
 
       if (!wallet) {
@@ -337,63 +231,71 @@
       }
 
       if (!/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
-        errorMsg.textContent = 'Please enter a valid Ethereum wallet address';
+        errorMsg.textContent = 'Please enter a valid Ethereum wallet address (0x + 40 characters)';
         errorMsg.classList.add('show');
         return;
       }
 
       submitBtn.disabled = true;
-      submitBtn.textContent = '⏳ Submitting...';
+      submitBtn.innerHTML = '<span class="spinner">⏳</span> Submitting...';
 
+      try {
+        var response = await fetch('/.netlify/functions/submit-invite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ inviter: inviterAddress, invitee: wallet })
+        });
+
+        var data = await response.json();
+
+        if (data.success) {
+          document.getElementById('success-wallet').textContent = wallet;
+          showView('success');
+        } else {
+          errorMsg.textContent = data.error || 'Something went wrong. Please try again.';
+          errorMsg.classList.add('show');
+        }
+      } catch (err) {
+        console.error('Error submitting:', err);
+        errorMsg.textContent = 'Network error. Please try again.';
+        errorMsg.classList.add('show');
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Claim Your Access';
+    }
+
+    function copyLink() {
+      var linkInput = document.getElementById('share-link');
+      navigator.clipboard.writeText(linkInput.value);
+      var copyBtn = document.getElementById('copy-btn');
+      copyBtn.textContent = '✓';
+      copyBtn.classList.add('copied');
       setTimeout(function() {
-        document.getElementById('success-wallet').textContent = wallet;
-        showView('success');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Claim Your Access';
-        walletInput.value = '';
-      }, 1500);
+        copyBtn.textContent = '📋';
+        copyBtn.classList.remove('copied');
+      }, 2000);
+    }
+
+    function shareTwitter() {
+      var text = encodeURIComponent("I'm in Youmio Season 1! Join me and start earning Affinity 🚀");
+      var url = encodeURIComponent(window.location.href);
+      window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
     }
 
     // Event listeners
-    inviteBtnHeader.addEventListener('click', openPopup);
-    inviteBtnMain.addEventListener('click', openPopup);
-    popupClose.addEventListener('click', closePopup);
-    popupOverlay.addEventListener('click', function(e) {
-      if (e.target === popupOverlay) closePopup();
-    });
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closePopup();
-    });
-
-    copyBtn.addEventListener('click', copyLink);
-    twitterBtn.addEventListener('click', shareTwitter);
-    previewBtn.addEventListener('click', function() { showView('claim'); });
-    submitBtn.addEventListener('click', submitWallet);
-    gotoBtn.addEventListener('click', closePopup);
-
-    walletInput.addEventListener('keypress', function(e) {
+    document.getElementById('submit-btn').addEventListener('click', submitWallet);
+    document.getElementById('wallet-input').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') submitWallet();
     });
-
-    // Demo buttons
-    document.getElementById('demo-claim').addEventListener('click', function() { showView('claim'); });
-    document.getElementById('demo-success').addEventListener('click', function() { 
-      document.getElementById('success-wallet').textContent = '0x1234567890abcdef1234567890abcdef12345678';
-      showView('success'); 
+    document.getElementById('copy-btn').addEventListener('click', copyLink);
+    document.getElementById('twitter-btn').addEventListener('click', shareTwitter);
+    document.getElementById('goto-youmio-btn').addEventListener('click', function() {
+      window.location.href = 'https://youmio.ai';
     });
-    document.getElementById('demo-used').addEventListener('click', function() { showView('used'); });
-    document.getElementById('demo-invalid').addEventListener('click', function() { showView('invalid'); });
 
-    document.getElementById('demo-share2').addEventListener('click', function() { showView('share'); });
-    document.getElementById('demo-success2').addEventListener('click', function() { 
-      document.getElementById('success-wallet').textContent = '0x1234567890abcdef1234567890abcdef12345678';
-      showView('success'); 
-    });
-    document.getElementById('demo-used2').addEventListener('click', function() { showView('used'); });
-    document.getElementById('demo-invalid2').addEventListener('click', function() { showView('invalid'); });
-
-    document.getElementById('back-used').addEventListener('click', function() { showView('share'); });
-    document.getElementById('back-invalid').addEventListener('click', function() { showView('share'); });
+    // Initialize
+    checkInvite();
   </script>
 </body>
 </html>
