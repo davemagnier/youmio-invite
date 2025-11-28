@@ -10,7 +10,7 @@
   <link rel="icon" href="https://youmio.ai/favicon.ico">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: #0a0a0f; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #0a0a0f; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; flex-direction: column; }
     .glow { position: fixed; width: 300px; height: 300px; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
     .glow-1 { top: 20%; left: 20%; background: rgba(236,72,153,0.15); }
     .glow-2 { bottom: 20%; right: 20%; background: rgba(168,85,247,0.15); }
@@ -57,9 +57,11 @@
     .view { display: none; }
     .view.active { display: block; }
     .logo-header { text-align: center; margin-bottom: 24px; position: relative; z-index: 1; }
-    .logo-img { height: 56px; width: auto; margin-bottom: 12px; }
-    .fallback-logo { justify-content: center; margin-bottom: 12px; }
-    .season-text { font-size: 22px; font-weight: 600; background: linear-gradient(135deg, #c084fc 0%, #ec4899 50%, #f97316 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 0.05em; }
+    .logo-img { height: 120px; width: auto; }
+    .fallback-logo { justify-content: center; }
+    .fallback-logo svg { width: 120px; height: auto; }
+    .season-text { font-size: 26px; font-weight: 600; background: linear-gradient(135deg, #c084fc 0%, #ec4899 50%, #f97316 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 0.05em; text-align: center; margin-top: 24px; position: relative; z-index: 1; }
+    .page-container { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; }
     .loading-view { text-align: center; padding: 40px 20px; }
     .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(236,72,153,0.3); border-top-color: #ec4899; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
     .loading-text { color: #9ca3af; font-size: 14px; }
@@ -73,25 +75,26 @@
   <div class="glow glow-1"></div>
   <div class="glow glow-2"></div>
 
-  <!-- Logo and Season Header -->
-  <div class="logo-header">
-    <img src="/logo.png" alt="Youmio" class="logo-img" onerror="this.style.display='none'; document.getElementById('fallback-logo').style.display='flex';">
-    <div id="fallback-logo" class="fallback-logo" style="display: none;">
-      <svg width="60" height="52" viewBox="0 0 60 52" fill="none">
-        <path d="M30 0C16.2 0 5 10.8 5 24v28h10V24c0-8.4 6.6-15 15-15s15 6.6 15 15v28h10V24C55 10.8 43.8 0 30 0z" fill="url(#logo-gradient)"/>
-        <defs>
-          <linearGradient id="logo-gradient" x1="5" y1="0" x2="55" y2="52" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#c084fc"/>
-            <stop offset="50%" stop-color="#ec4899"/>
-            <stop offset="100%" stop-color="#f97316"/>
-          </linearGradient>
-        </defs>
-      </svg>
+  <div class="page-container">
+    <!-- Logo Above -->
+    <div class="logo-header">
+      <img src="/logo.png" alt="Youmio" class="logo-img" onerror="this.style.display='none'; document.getElementById('fallback-logo').style.display='flex';">
+      <div id="fallback-logo" class="fallback-logo" style="display: none;">
+        <svg width="60" height="52" viewBox="0 0 60 52" fill="none">
+          <path d="M30 0C16.2 0 5 10.8 5 24v28h10V24c0-8.4 6.6-15 15-15s15 6.6 15 15v28h10V24C55 10.8 43.8 0 30 0z" fill="url(#logo-gradient)"/>
+          <defs>
+            <linearGradient id="logo-gradient" x1="5" y1="0" x2="55" y2="52" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#c084fc"/>
+              <stop offset="50%" stop-color="#ec4899"/>
+              <stop offset="100%" stop-color="#f97316"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
     </div>
-    <div class="season-text">Season 1</div>
-  </div>
 
-  <div class="card">
+    <!-- Card -->
+    <div class="card">
     <!-- Loading State -->
     <div id="view-loading" class="view active">
       <div class="loading-view">
@@ -186,6 +189,10 @@
       <p class="success-text">Please try again later or contact support.</p>
       <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
     </div>
+  </div>
+
+    <!-- Season Text Below -->
+    <div class="season-text">Season 1</div>
   </div>
 
   <script>
