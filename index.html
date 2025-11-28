@@ -99,7 +99,7 @@
       </div>
       <div class="btn-row">
         <button class="btn-half btn-twitter" id="twitter-btn">Share on X</button>
-        <button class="btn-half btn" id="goto-youmio-btn">Go to Youmio</button>
+        <button class="btn-half btn" id="goto-youmio-btn">Return to Youmio App</button>
       </div>
     </div>
 
@@ -138,7 +138,7 @@
         <div class="inviter-label">Your wallet</div>
         <div class="inviter-addr" id="success-wallet" style="font-size: 13px; word-break: break-all;"></div>
       </div>
-      <a href="https://youmio.ai" class="btn" style="text-decoration: none;">Go to Youmio</a>
+      <a href="https://app.youmio.ai/" class="btn" style="text-decoration: none;">Return to Youmio App</a>
     </div>
 
     <!-- Used View -->
@@ -146,7 +146,7 @@
       <div class="status-icon warning">⚠️</div>
       <div class="success-title">Invite Already Used</div>
       <p class="success-text">This invite link has already been claimed. Ask your friend for another invite or wait for public access.</p>
-      <a href="https://youmio.ai" class="btn btn-secondary" style="text-decoration: none;">Visit Youmio</a>
+      <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
     </div>
 
     <!-- Invalid View -->
@@ -154,7 +154,7 @@
       <div class="status-icon error">❌</div>
       <div class="success-title">Invalid Invite</div>
       <p class="success-text">This invite link is not valid. Please check the link or request a new one.</p>
-      <a href="https://youmio.ai" class="btn btn-secondary" style="text-decoration: none;">Visit Youmio</a>
+      <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
     </div>
 
     <!-- Error View -->
@@ -162,7 +162,7 @@
       <div class="status-icon error">⚠️</div>
       <div class="success-title">Something Went Wrong</div>
       <p class="success-text">Please try again later or contact support.</p>
-      <a href="https://youmio.ai" class="btn btn-secondary" style="text-decoration: none;">Visit Youmio</a>
+      <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
     </div>
   </div>
 
@@ -291,7 +291,7 @@
     document.getElementById('copy-btn').addEventListener('click', copyLink);
     document.getElementById('twitter-btn').addEventListener('click', shareTwitter);
     document.getElementById('goto-youmio-btn').addEventListener('click', function() {
-      window.location.href = 'https://youmio.ai';
+      window.location.href = 'https://app.youmio.ai/';
     });
 
     // Initialize
