@@ -8,6 +8,7 @@
   <meta property="og:title" content="You're Invited to Youmio Season 1">
   <meta property="og:description" content="Claim your spot and start earning Affinity.">
   <link rel="icon" href="https://app.youmio.ai/favicon.ico">
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: #0a0a0f; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; flex-direction: column; }
@@ -42,6 +43,7 @@
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); }
     .btn-secondary:hover { background: rgba(255,255,255,0.15); filter: none; }
+    .btn-wallet { background: linear-gradient(135deg, #8b5cf6, #6366f1); }
     .link-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 14px; margin-bottom: 16px; }
     .link-text { color: white; font-family: monospace; font-size: 12px; word-break: break-all; margin-bottom: 12px; }
     .link-actions { display: flex; gap: 8px; }
@@ -51,13 +53,6 @@
     .link-btn-copy.copied { background: rgba(34,197,94,0.2); color: #4ade80; }
     .link-btn-twitter { background: rgba(29,161,242,0.15); color: #1DA1F2; }
     .link-btn-twitter:hover { background: rgba(29,161,242,0.25); }
-    .generated-links { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-    .generated-links-title { color: #9ca3af; font-size: 13px; margin-bottom: 12px; }
-    .generated-link-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 8px; }
-    .generated-link-code { font-family: monospace; font-size: 13px; color: white; }
-    .generated-link-status { font-size: 11px; padding: 4px 8px; border-radius: 4px; }
-    .generated-link-status.unused { background: rgba(34,197,94,0.2); color: #4ade80; }
-    .generated-link-status.used { background: rgba(239,68,68,0.2); color: #f87171; }
     .success-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #4ade80, #16a34a); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
     .success-title { color: white; font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 8px; }
     .success-text { color: #9ca3af; font-size: 14px; text-align: center; margin-bottom: 20px; line-height: 1.5; }
@@ -65,6 +60,10 @@
     .status-icon { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; }
     .status-icon.warning { background: rgba(234,179,8,0.2); }
     .status-icon.error { background: rgba(239,68,68,0.2); }
+    .verify-section { text-align: center; padding: 20px 0; }
+    .verify-icon { font-size: 48px; margin-bottom: 16px; }
+    .verify-title { color: white; font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .verify-text { color: #9ca3af; font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
     .spinner { animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .view { display: none; }
@@ -84,7 +83,6 @@
   <div class="glow glow-2"></div>
 
   <div class="page-container">
-    <!-- Logo Above -->
     <div class="logo-header">
       <img src="/logo.png" alt="Youmio" class="logo-img" onerror="this.style.display='none'; document.getElementById('fallback-logo').style.display='flex';">
       <div id="fallback-logo" class="fallback-logo" style="display: none;">
@@ -101,7 +99,6 @@
       </div>
     </div>
 
-    <!-- Card -->
     <div class="card">
       <!-- Loading State -->
       <div id="view-loading" class="view active">
@@ -111,7 +108,35 @@
         </div>
       </div>
 
-      <!-- Share View (for inviter - /ref/{wallet}) -->
+      <!-- Verify Wallet View (for inviter before generating) -->
+      <div id="view-verify" class="view">
+        <div class="header">
+          <div class="icon">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+          </div>
+          <div>
+            <div class="title">Invite a Friend to Season 1</div>
+            <div class="subtitle">Verify wallet to continue</div>
+          </div>
+        </div>
+
+        <div class="verify-section">
+          <div class="verify-icon">🔐</div>
+          <div class="verify-title">Verify You Own This Wallet</div>
+          <div class="verify-text">To generate invite links, please connect your wallet and sign a message to prove ownership.</div>
+          <div class="inviter-box" style="text-align: left; margin-bottom: 20px;">
+            <div class="inviter-label">Wallet to verify</div>
+            <div class="inviter-addr" id="verify-wallet-display"></div>
+          </div>
+          <button class="btn btn-wallet" id="connect-wallet-btn">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+            Connect Wallet & Sign
+          </button>
+          <p id="verify-error" class="error" style="margin-top: 12px; text-align: center;"></p>
+        </div>
+      </div>
+
+      <!-- Share View (after verification) -->
       <div id="view-share" class="view">
         <div class="header">
           <div class="icon">
@@ -127,12 +152,10 @@
           <p class="info-text">Generate a unique invite link for each friend. Each link can only be used once.</p>
         </div>
 
-        <!-- No invites remaining -->
         <div id="no-invites" style="display: none;">
           <p class="no-invites-text">You've used all your invites. Thanks for spreading the word!</p>
         </div>
 
-        <!-- Generate button -->
         <div id="generate-section">
           <button class="btn" id="generate-btn">
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -140,7 +163,6 @@
           </button>
         </div>
 
-        <!-- Generated link display -->
         <div id="generated-link-section" style="display: none; margin-top: 20px;">
           <label class="label">Your invite link (one-time use)</label>
           <div class="link-box">
@@ -156,7 +178,7 @@
         </div>
       </div>
 
-      <!-- Claim View (for invitee - /claim/{code}) -->
+      <!-- Claim View (for invitee) -->
       <div id="view-claim" class="view">
         <div class="header">
           <div class="icon">
@@ -219,7 +241,6 @@
       </div>
     </div>
 
-    <!-- Season Text Below -->
     <div class="season-text">Season 1</div>
   </div>
 
@@ -227,28 +248,24 @@
     var inviterWallet = '';
     var currentCode = '';
     var invitesRemaining = 0;
+    var walletSignature = '';
+    var signedMessage = '';
 
-    // Detect URL type: /ref/{wallet} or /claim/{code}
     function getPageType() {
       var path = window.location.pathname;
-      
-      // Check for /ref/{wallet} - inviter generating links
       var refMatch = path.match(/\/ref\/(0x[a-fA-F0-9]{40})/i);
       if (refMatch) {
         return { type: 'share', wallet: refMatch[1] };
       }
-      
-      // Check for /claim/{code} - invitee claiming
       var claimMatch = path.match(/\/claim\/([A-Za-z0-9]{6,12})/);
       if (claimMatch) {
         return { type: 'claim', code: claimMatch[1] };
       }
-      
       return { type: 'invalid' };
     }
 
     function showView(viewName) {
-      var views = ['loading', 'share', 'claim', 'success', 'used', 'invalid', 'error'];
+      var views = ['loading', 'verify', 'share', 'claim', 'success', 'used', 'invalid', 'error'];
       views.forEach(function(v) {
         var el = document.getElementById('view-' + v);
         if (el) el.classList.remove('active');
@@ -257,13 +274,25 @@
       if (target) target.classList.add('active');
     }
 
-    // Initialize based on URL
     async function init() {
       var page = getPageType();
-
       if (page.type === 'share') {
         inviterWallet = page.wallet;
-        await loadShareView();
+        document.getElementById('verify-wallet-display').textContent = inviterWallet.slice(0, 6) + '...' + inviterWallet.slice(-4);
+        
+        // Check if wallet is on allowlist first
+        try {
+          var response = await fetch('/.netlify/functions/check-invite?inviter=' + inviterWallet);
+          var data = await response.json();
+          if (data.valid) {
+            invitesRemaining = data.invitesRemaining;
+            showView('verify');
+          } else {
+            showView('invalid');
+          }
+        } catch (err) {
+          showView('error');
+        }
       } else if (page.type === 'claim') {
         currentCode = page.code;
         await loadClaimView();
@@ -272,37 +301,74 @@
       }
     }
 
-    // Load share view for inviter
-    async function loadShareView() {
-      try {
-        var response = await fetch('/.netlify/functions/check-invite?inviter=' + inviterWallet);
-        var data = await response.json();
+    async function connectAndSign() {
+      var btn = document.getElementById('connect-wallet-btn');
+      var errorEl = document.getElementById('verify-error');
+      errorEl.classList.remove('show');
 
-        if (data.valid) {
-          invitesRemaining = data.invitesRemaining;
-          document.getElementById('invite-count').textContent = invitesRemaining + '/5 Invites Remaining';
-          
-          if (invitesRemaining <= 0) {
-            document.getElementById('no-invites').style.display = 'block';
-            document.getElementById('generate-section').style.display = 'none';
-          }
-          
-          showView('share');
-        } else {
-          showView('invalid');
-        }
-      } catch (err) {
-        console.error('Error:', err);
-        showView('error');
+      if (typeof window.ethereum === 'undefined') {
+        errorEl.textContent = 'No wallet found. Please install MetaMask or another Web3 wallet.';
+        errorEl.classList.add('show');
+        return;
       }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner">⏳</span> Connecting...';
+
+      try {
+        // Request account access
+        var accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        var connectedWallet = accounts[0];
+
+        // Check if connected wallet matches the URL wallet
+        if (connectedWallet.toLowerCase() !== inviterWallet.toLowerCase()) {
+          errorEl.textContent = 'Connected wallet does not match. Please connect with ' + inviterWallet.slice(0, 6) + '...' + inviterWallet.slice(-4);
+          errorEl.classList.add('show');
+          btn.disabled = false;
+          btn.innerHTML = '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg> Connect Wallet & Sign';
+          return;
+        }
+
+        btn.innerHTML = '<span class="spinner">⏳</span> Sign message in wallet...';
+
+        // Create message to sign
+        var timestamp = Math.floor(Date.now() / 1000);
+        var message = 'Youmio Season 1 Invite Verification\n\nI am verifying ownership of this wallet to generate invite links.\n\nWallet: ' + inviterWallet.slice(0, 6) + '...' + inviterWallet.slice(-4) + '\nTimestamp: ' + timestamp;
+
+        // Request signature
+        var provider = new ethers.providers.Web3Provider(window.ethereum);
+        var signer = provider.getSigner();
+        var signature = await signer.signMessage(message);
+
+        walletSignature = signature;
+        signedMessage = message;
+
+        // Show share view
+        document.getElementById('invite-count').textContent = invitesRemaining + '/5 Invites Remaining';
+        if (invitesRemaining <= 0) {
+          document.getElementById('no-invites').style.display = 'block';
+          document.getElementById('generate-section').style.display = 'none';
+        }
+        showView('share');
+
+      } catch (err) {
+        console.error('Wallet connection error:', err);
+        if (err.code === 4001) {
+          errorEl.textContent = 'You rejected the request. Please try again.';
+        } else {
+          errorEl.textContent = 'Failed to connect wallet. Please try again.';
+        }
+        errorEl.classList.add('show');
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg> Connect Wallet & Sign';
     }
 
-    // Load claim view for invitee
     async function loadClaimView() {
       try {
         var response = await fetch('/.netlify/functions/check-code?code=' + currentCode);
         var data = await response.json();
-
         if (data.valid) {
           document.getElementById('inviter-display').textContent = data.inviter;
           showView('claim');
@@ -312,12 +378,10 @@
           showView('invalid');
         }
       } catch (err) {
-        console.error('Error:', err);
         showView('error');
       }
     }
 
-    // Generate a new invite code
     async function generateCode() {
       var btn = document.getElementById('generate-btn');
       btn.disabled = true;
@@ -327,7 +391,11 @@
         var response = await fetch('/.netlify/functions/generate-code', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ inviter: inviterWallet })
+          body: JSON.stringify({
+            inviter: inviterWallet,
+            signature: walletSignature,
+            message: signedMessage
+          })
         });
 
         var data = await response.json();
@@ -344,7 +412,6 @@
             document.getElementById('generate-another-btn').style.display = 'none';
           }
 
-          // Store for copy/share
           currentCode = data.code;
         } else {
           alert(data.error || 'Failed to generate code');
@@ -358,7 +425,6 @@
       btn.innerHTML = '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Generate Invite Link';
     }
 
-    // Generate another code
     function generateAnother() {
       document.getElementById('generated-link-section').style.display = 'none';
       document.getElementById('copy-btn').textContent = '📋 Copy Link';
@@ -366,7 +432,6 @@
       generateCode();
     }
 
-    // Copy link to clipboard
     function copyLink() {
       var link = document.getElementById('generated-link-text').textContent;
       navigator.clipboard.writeText(link);
@@ -379,7 +444,6 @@
       }, 2000);
     }
 
-    // Share to Twitter
     function shareTwitter() {
       var link = document.getElementById('generated-link-text').textContent;
       var text = encodeURIComponent("I'm in Youmio Season 1! Join me and start earning Affinity 🚀");
@@ -387,7 +451,6 @@
       window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
     }
 
-    // Submit wallet to claim code
     async function submitWallet() {
       var walletInput = document.getElementById('wallet-input');
       var errorMsg = document.getElementById('error-msg');
@@ -428,7 +491,6 @@
           errorMsg.classList.add('show');
         }
       } catch (err) {
-        console.error('Error:', err);
         errorMsg.textContent = 'Network error. Please try again.';
         errorMsg.classList.add('show');
       }
@@ -438,6 +500,7 @@
     }
 
     // Event listeners
+    document.getElementById('connect-wallet-btn').addEventListener('click', connectAndSign);
     document.getElementById('generate-btn').addEventListener('click', generateCode);
     document.getElementById('generate-another-btn').addEventListener('click', generateAnother);
     document.getElementById('copy-btn').addEventListener('click', copyLink);
@@ -447,7 +510,6 @@
       if (e.key === 'Enter') submitWallet();
     });
 
-    // Initialize
     init();
   </script>
 </body>
