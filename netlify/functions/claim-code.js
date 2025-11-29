@@ -123,13 +123,26 @@ exports.handler = async (event) => {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'Cannot invite yourself' }) };
     }
 
-    // Mark code as used
+    const claimedAt = new Date().toISOString();
+
+    // Mark code as used in InviteCodes
     await sheets.spreadsheets.values.update({
       spreadsheetId,
       range: `InviteCodes!D${codeRowIndex + 1}:F${codeRowIndex + 1}`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
-        values: [['TRUE', wallet, new Date().toISOString()]]
+        values: [['TRUE', wallet, claimedAt]]
+      }
+    });
+
+    // Append to ClaimedInvites tab for easy copy/paste
+    await sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range: 'ClaimedInvites!A:C',
+      valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
+      requestBody: {
+        values: [[wallet, inviterWallet, claimedAt]]
       }
     });
 
