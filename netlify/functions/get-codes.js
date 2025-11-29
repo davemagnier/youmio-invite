@@ -33,42 +33,43 @@ exports.handler = async (event) => {
 
     const sheets = google.sheets({ version: 'v4', auth });
     
-    // Get all codes from the Codes sheet
+    // Get all codes from the InviteCodes sheet
+    // Columns: A=code, B=inviter_wallet, C=created_at, D=used, E=invitee_wallet, F=used_at
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-      range: 'Codes!A:D', // Assuming columns: Code, Inviter, ClaimedBy, CreatedAt
+      range: 'InviteCodes!A:F',
     });
 
     const rows = response.data.values || [];
     
-    // Find all codes created by this inviter that haven't been claimed yet
+    // Find all codes created by this inviter
     const codes = [];
     for (let i = 1; i < rows.length; i++) { // Skip header row
       const row = rows[i];
       const code = row[0];
       const rowInviter = row[1];
-      const claimedBy = row[2];
+      const used = row[3]; // Column D: TRUE or FALSE
       
-      // Match inviter (case-insensitive) and not yet claimed
+      // Match inviter (case-insensitive)
       if (rowInviter && rowInviter.toLowerCase() === inviter.toLowerCase()) {
         codes.push({
           code: code,
-          claimed: !!claimedBy
+          used: used === 'TRUE'
         });
       }
     }
 
-    // Return only unclaimed codes
-    const unclaimedCodes = codes.filter(c => !c.claimed).map(c => c.code);
+    // Return only unused codes
+    const unusedCodes = codes.filter(c => !c.used).map(c => c.code);
 
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
         success: true,
-        codes: unclaimedCodes,
+        codes: unusedCodes,
         totalGenerated: codes.length,
-        claimed: codes.filter(c => c.claimed).length
+        used: codes.filter(c => c.used).length
       })
     };
 
