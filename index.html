@@ -7,7 +7,7 @@
   <meta name="description" content="You've been invited to Youmio Season 1. Claim your access now.">
   <meta property="og:title" content="You're Invited to Youmio Season 1">
   <meta property="og:description" content="Claim your spot and start earning Affinity.">
-  <link rel="icon" href="https://app.youmio.ai/favicon.ico">
+  <link rel="icon" href="/favicon.ico">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -93,12 +93,14 @@
 
     /* Generated codes list */
     .codes-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; max-height: 280px; overflow-y: auto; }
-    .code-row { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px; }
+    .code-row { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px; }
     .code-number { font-size: 12px; font-weight: 600; color: #ec4899; min-width: 24px; }
     .code-link { flex: 1; font-size: 11px; font-family: monospace; color: rgba(255,255,255,0.8); word-break: break-all; line-height: 1.4; }
     .btn-copy-small { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; color: white; cursor: pointer; font-size: 13px; transition: all 0.2s; }
     .btn-copy-small:hover { background: rgba(255,255,255,0.2); }
     .btn-copy-small.copied { background: rgba(34,197,94,0.2); color: #4ade80; }
+    .btn-twitter-small { background: rgba(29,161,242,0.15); border: 1px solid rgba(29,161,242,0.2); border-radius: 6px; padding: 6px 10px; color: #1DA1F2; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+    .btn-twitter-small:hover { background: rgba(29,161,242,0.25); }
 
     @media (max-width: 480px) {
       .card { padding: 20px; }
@@ -603,7 +605,8 @@
         div.className = 'code-row';
         div.innerHTML = '<div class="code-number">#' + (index + 1) + '</div>' +
           '<div class="code-link">' + link + '</div>' +
-          '<button class="btn-copy-small" onclick="copySpecificLink(' + index + ', this)">📋</button>';
+          '<button class="btn-copy-small" onclick="copySpecificLink(' + index + ', this)">📋</button>' +
+          '<button class="btn-twitter-small" onclick="shareSpecificLink(' + index + ')">𝕏</button>';
         container.appendChild(div);
       });
     }
@@ -617,6 +620,13 @@
         btn.textContent = '📋';
         btn.classList.remove('copied');
       }, 1500);
+    }
+
+    function shareSpecificLink(index) {
+      var link = window.location.origin + '/claim/' + generatedCodes[index];
+      var text = encodeURIComponent("I'm in Youmio Season 1! Join me and start earning Affinity 🚀");
+      var url = encodeURIComponent(link);
+      window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
     }
 
     function copyAllLinks() {
@@ -711,7 +721,6 @@
 
     document.getElementById('generate-btn').addEventListener('click', generateCode);
     document.getElementById('copy-all-btn').addEventListener('click', copyAllLinks);
-    document.getElementById('twitter-btn').addEventListener('click', shareTwitter);
     document.getElementById('submit-btn').addEventListener('click', submitWallet);
     document.getElementById('wallet-input').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') submitWallet();
