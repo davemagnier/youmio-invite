@@ -4,509 +4,810 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Youmio Season 1 Invite</title>
-  <meta name="description" content="You've been invited to Youmio Season 1. Claim your access now.">
-  <meta property="og:title" content="You're Invited to Youmio Season 1">
-  <meta property="og:description" content="Claim your spot and start earning Affinity.">
-  <link rel="icon" href="https://app.youmio.ai/favicon.ico">
-  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: #0a0a0f; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; flex-direction: column; }
-    .glow { position: fixed; width: 300px; height: 300px; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
-    .glow-1 { top: 20%; left: 20%; background: rgba(236,72,153,0.15); }
-    .glow-2 { bottom: 20%; right: 20%; background: rgba(168,85,247,0.15); }
-    .page-container { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; }
-    .logo-header { text-align: center; margin-bottom: 24px; }
-    .logo-img { height: 120px; width: auto; }
-    .fallback-logo { justify-content: center; }
-    .fallback-logo svg { width: 120px; height: auto; }
-    .season-text { font-size: 26px; font-weight: 600; background: linear-gradient(135deg, #c084fc 0%, #ec4899 50%, #f97316 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 0.05em; text-align: center; margin-top: 24px; }
-    .card { position: relative; z-index: 1; width: 100%; max-width: 420px; background: rgba(22,22,31,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; }
-    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-    .icon { width: 44px; height: 44px; background: linear-gradient(135deg, #ec4899, #9333ea); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .title { color: white; font-size: 18px; font-weight: 600; }
-    .subtitle { color: #9ca3af; font-size: 13px; margin-top: 2px; }
-    .invite-count { color: #f9a8d4; }
-    .inviter-box { padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; }
-    .inviter-label { color: #9ca3af; font-size: 13px; margin-bottom: 4px; }
-    .inviter-addr { color: white; font-family: monospace; font-size: 15px; }
-    .info-box { padding: 14px; background: linear-gradient(to right, rgba(236,72,153,0.1), rgba(168,85,247,0.1)); border: 1px solid rgba(236,72,153,0.2); border-radius: 10px; margin-bottom: 20px; }
-    .info-text { color: #d1d5db; font-size: 13px; line-height: 1.5; }
-    .label { display: block; color: #9ca3af; font-size: 13px; margin-bottom: 8px; }
-    .input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; color: white; font-size: 14px; font-family: monospace; outline: none; margin-bottom: 6px; }
-    .input:focus { border-color: rgba(236,72,153,0.5); }
-    .input::placeholder { color: #6b7280; }
-    .error { color: #f87171; font-size: 13px; margin-bottom: 10px; display: none; }
-    .error.show { display: block; }
-    .btn { width: 100%; padding: 14px; background: linear-gradient(to right, #ec4899, #db2777); border: none; color: white; font-weight: 600; font-size: 15px; border-radius: 10px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .btn:hover { filter: brightness(1.1); }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); }
-    .btn-secondary:hover { background: rgba(255,255,255,0.15); filter: none; }
-    .btn-wallet { background: linear-gradient(135deg, #8b5cf6, #6366f1); }
-    .link-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 14px; margin-bottom: 16px; }
-    .link-text { color: white; font-family: monospace; font-size: 12px; word-break: break-all; margin-bottom: 12px; }
-    .link-actions { display: flex; gap: 8px; }
-    .link-btn { flex: 1; padding: 10px; border-radius: 8px; font-weight: 500; font-size: 13px; cursor: pointer; transition: all 0.2s; text-align: center; border: none; }
-    .link-btn-copy { background: rgba(255,255,255,0.1); color: white; }
-    .link-btn-copy:hover { background: rgba(255,255,255,0.2); }
-    .link-btn-copy.copied { background: rgba(34,197,94,0.2); color: #4ade80; }
-    .link-btn-twitter { background: rgba(29,161,242,0.15); color: #1DA1F2; }
-    .link-btn-twitter:hover { background: rgba(29,161,242,0.25); }
-    .success-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #4ade80, #16a34a); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-    .success-title { color: white; font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 8px; }
-    .success-text { color: #9ca3af; font-size: 14px; text-align: center; margin-bottom: 20px; line-height: 1.5; }
-    .wallet-box { padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 20px; }
-    .status-icon { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; }
-    .status-icon.warning { background: rgba(234,179,8,0.2); }
-    .status-icon.error { background: rgba(239,68,68,0.2); }
-    .verify-section { text-align: center; padding: 20px 0; }
-    .verify-icon { font-size: 48px; margin-bottom: 16px; }
-    .verify-title { color: white; font-size: 16px; font-weight: 600; margin-bottom: 8px; }
-    .verify-text { color: #9ca3af; font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
-    .spinner { animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .view { display: none; }
-    .view.active { display: block; }
-    .loading-view { text-align: center; padding: 40px 20px; }
-    .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(236,72,153,0.3); border-top-color: #ec4899; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
-    .loading-text { color: #9ca3af; font-size: 14px; }
-    .no-invites-text { color: #9ca3af; font-size: 14px; text-align: center; padding: 20px 0; }
-    @media (max-width: 480px) {
-      .card { padding: 20px; }
-      .link-actions { flex-direction: column; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #fff;
+    }
+
+    .logo {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .logo-text {
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #f8a4d0 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 420px;
+      width: 100%;
+      backdrop-filter: blur(20px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .icon-box {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .card-title { font-size: 22px; font-weight: 700; }
+    .card-subtitle { font-size: 14px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+
+    .section { text-align: center; padding: 20px 0; }
+    .lock-icon { font-size: 64px; margin-bottom: 16px; }
+    .section-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+    .section-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.6; }
+
+    .wallet-display {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 20px 0;
+    }
+    .wallet-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 6px; }
+    .wallet-address { font-size: 18px; font-weight: 600; font-family: monospace; }
+
+    .btn {
+      width: 100%;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(168,85,247,0.4);
+    }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+      margin-top: 12px;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.15); }
+
+    .error-msg {
+      color: #f87171;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 16px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    .success-box {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .success-box .check { font-size: 32px; margin-bottom: 8px; }
+    .success-box p { color: #4ade80; font-weight: 600; }
+
+    .invite-link-box {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .invite-link-box label { font-size: 12px; color: rgba(255,255,255,0.5); display: block; margin-bottom: 8px; }
+    .invite-link {
+      width: 100%;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 12px;
+      color: #a855f7;
+      font-size: 14px;
+      font-family: monospace;
+      word-break: break-all;
+    }
+
+    .btn-row { display: flex; gap: 12px; margin-top: 16px; }
+    .btn-row .btn { flex: 1; }
+    .btn-copy { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); color: white; }
+    .btn-twitter { background: #1DA1F2; color: white; }
+
+    .invites-remaining {
+      text-align: center;
+      padding: 12px;
+      background: rgba(168,85,247,0.1);
+      border-radius: 8px;
+      margin-top: 16px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+    }
+    .invites-remaining strong { color: #a855f7; }
+
+    .hidden { display: none !important; }
+
+    .input-group { margin-bottom: 20px; }
+    .input-group label { display: block; font-size: 14px; margin-bottom: 8px; color: rgba(255,255,255,0.7); }
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.3);
+      color: white;
+      font-size: 16px;
+      font-family: monospace;
+    }
+    .input-group input:focus { outline: none; border-color: #a855f7; }
+    .input-group input::placeholder { color: rgba(255,255,255,0.3); }
+
+    .invited-by {
+      text-align: center;
+      padding: 16px;
+      background: rgba(168,85,247,0.1);
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    .invited-by span { color: rgba(255,255,255,0.6); font-size: 14px; }
+    .invited-by strong { color: #a855f7; display: block; margin-top: 4px; font-family: monospace; }
+
+    /* Wallet Selection Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-overlay.hidden { display: none; }
+    
+    .modal {
+      background: #1a1a2e;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 380px;
+      width: 100%;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .wallet-option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 10px;
+    }
+    .wallet-option:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: #a855f7;
+    }
+    .wallet-option img {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+    }
+    .wallet-option-info { flex: 1; }
+    .wallet-option-name { font-weight: 600; font-size: 15px; }
+    .wallet-option-desc { font-size: 12px; color: rgba(255,255,255,0.5); }
+    .wallet-option.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .wallet-option.disabled:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.1);
+    }
+    .modal-close {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.05); }
+
+    .mobile-note {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      margin-top: 16px;
+      line-height: 1.5;
     }
   </style>
 </head>
 <body>
-  <div class="glow glow-1"></div>
-  <div class="glow glow-2"></div>
+  <div class="logo">
+    <div class="logo-text">youmio</div>
+  </div>
 
-  <div class="page-container">
-    <div class="logo-header">
-      <img src="/logo.png" alt="Youmio" class="logo-img" onerror="this.style.display='none'; document.getElementById('fallback-logo').style.display='flex';">
-      <div id="fallback-logo" class="fallback-logo" style="display: none;">
-        <svg width="60" height="52" viewBox="0 0 60 52" fill="none">
-          <path d="M30 0C16.2 0 5 10.8 5 24v28h10V24c0-8.4 6.6-15 15-15s15 6.6 15 15v28h10V24C55 10.8 43.8 0 30 0z" fill="url(#logo-gradient)"/>
-          <defs>
-            <linearGradient id="logo-gradient" x1="5" y1="0" x2="55" y2="52" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#c084fc"/>
-              <stop offset="50%" stop-color="#ec4899"/>
-              <stop offset="100%" stop-color="#f97316"/>
-            </linearGradient>
-          </defs>
-        </svg>
+  <div class="card">
+    <div class="card-header">
+      <div class="icon-box">🎫</div>
+      <div>
+        <div class="card-title">Invite a Friend to Season 1</div>
+        <div class="card-subtitle" id="header-subtitle">Verify wallet to continue</div>
       </div>
     </div>
 
-    <div class="card">
-      <!-- Loading State -->
-      <div id="view-loading" class="view active">
-        <div class="loading-view">
-          <div class="loading-spinner"></div>
-          <p class="loading-text">Loading...</p>
-        </div>
+    <!-- Verification Screen -->
+    <div id="verify-screen">
+      <div class="section">
+        <div class="lock-icon">🔐</div>
+        <div class="section-title">Verify You Own This Wallet</div>
+        <div class="section-desc">To generate invite links, please connect your wallet and sign a message to prove ownership.</div>
       </div>
 
-      <!-- Verify Wallet View (for inviter before generating) -->
-      <div id="view-verify" class="view">
-        <div class="header">
-          <div class="icon">
-            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
-          </div>
-          <div>
-            <div class="title">Invite a Friend to Season 1</div>
-            <div class="subtitle">Verify wallet to continue</div>
-          </div>
-        </div>
-
-        <div class="verify-section">
-          <div class="verify-icon">🔐</div>
-          <div class="verify-title">Verify You Own This Wallet</div>
-          <div class="verify-text">To generate invite links, please connect your wallet and sign a message to prove ownership.</div>
-          <div class="inviter-box" style="text-align: left; margin-bottom: 20px;">
-            <div class="inviter-label">Wallet to verify</div>
-            <div class="inviter-addr" id="verify-wallet-display"></div>
-          </div>
-          <button class="btn btn-wallet" id="connect-wallet-btn">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-            Connect Wallet & Sign
-          </button>
-          <p id="verify-error" class="error" style="margin-top: 12px; text-align: center;"></p>
-        </div>
+      <div class="wallet-display">
+        <div class="wallet-label">Wallet to verify</div>
+        <div class="wallet-address" id="wallet-to-verify">0x0000...0000</div>
       </div>
 
-      <!-- Share View (after verification) -->
-      <div id="view-share" class="view">
-        <div class="header">
-          <div class="icon">
-            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
-          </div>
-          <div>
-            <div class="title">Invite a Friend to Season 1</div>
-            <div class="subtitle invite-count" id="invite-count">Loading...</div>
-          </div>
-        </div>
-
-        <div class="info-box">
-          <p class="info-text">Generate a unique invite link for each friend. Each link can only be used once.</p>
-        </div>
-
-        <div id="no-invites" style="display: none;">
-          <p class="no-invites-text">You've used all your invites. Thanks for spreading the word!</p>
-        </div>
-
-        <div id="generate-section">
-          <button class="btn" id="generate-btn">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            Generate Invite Link
-          </button>
-        </div>
-
-        <div id="generated-link-section" style="display: none; margin-top: 20px;">
-          <label class="label">Your invite link (one-time use)</label>
-          <div class="link-box">
-            <div class="link-text" id="generated-link-text"></div>
-            <div class="link-actions">
-              <button class="link-btn link-btn-copy" id="copy-btn">📋 Copy Link</button>
-              <button class="link-btn link-btn-twitter" id="twitter-btn">Share on X</button>
-            </div>
-          </div>
-          <button class="btn btn-secondary" id="generate-another-btn" style="margin-top: 12px;">
-            Generate Another Link
-          </button>
-        </div>
+      <button class="btn btn-primary" id="connect-wallet-btn">
+        🔗 Connect Wallet & Sign
+      </button>
+      
+      <div class="mobile-note">
+        📱 On mobile? Open this link in your wallet app's browser (MetaMask, Coinbase, Trust Wallet, etc.)
       </div>
 
-      <!-- Claim View (for invitee) -->
-      <div id="view-claim" class="view">
-        <div class="header">
-          <div class="icon">
-            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
-          </div>
-          <div>
-            <div class="title">Youmio App Season 1 Invite</div>
-            <div class="subtitle">You've been invited to Youmio</div>
-          </div>
-        </div>
-        <div class="inviter-box">
-          <div class="inviter-label">Invited by</div>
-          <div class="inviter-addr" id="inviter-display">0x6117...E6e8</div>
-        </div>
-        <label class="label">Your Wallet Address</label>
-        <input type="text" id="wallet-input" class="input" placeholder="0x...">
-        <p id="error-msg" class="error"></p>
-        <button class="btn" id="submit-btn">Claim Your Access</button>
-        <div class="info-box" style="margin-top: 16px;">
-          <p class="info-text">ℹ️ Season 1 is invite-only. Once allowlisted, you'll be able to earn Affinity which will unlock Youmio Ecosystem Rewards.</p>
-        </div>
+      <div class="error-msg" id="verify-error"></div>
+    </div>
+
+    <!-- Generate Screen (after verification) -->
+    <div id="generate-screen" class="hidden">
+      <div class="success-box">
+        <div class="check">✓</div>
+        <p>Wallet Verified!</p>
       </div>
 
-      <!-- Success View -->
-      <div id="view-success" class="view">
-        <div class="success-icon">
-          <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-        </div>
-        <div class="success-title">Access Claimed!</div>
-        <p class="success-text">Your wallet will be added to the Season 1 allowlist. This might take a few hours to activate.</p>
-        <div class="wallet-box">
-          <div class="inviter-label">Your wallet</div>
-          <div class="inviter-addr" id="success-wallet" style="font-size: 13px; word-break: break-all;"></div>
-        </div>
-        <a href="https://app.youmio.ai/" class="btn" style="text-decoration: none;">Return to Youmio App</a>
+      <button class="btn btn-primary" id="generate-btn">
+        ✨ Generate Invite Link
+      </button>
+
+      <div class="invites-remaining" id="invites-info">
+        You have <strong id="invites-count">-</strong> invites remaining
       </div>
 
-      <!-- Used View -->
-      <div id="view-used" class="view" style="text-align: center;">
-        <div class="status-icon warning">⚠️</div>
-        <div class="success-title">Invite Already Used</div>
-        <p class="success-text">This invite link has already been claimed. Ask your friend for a new invite link.</p>
-        <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
+      <div class="error-msg" id="generate-error"></div>
+    </div>
+
+    <!-- Share Screen (after generating) -->
+    <div id="share-screen" class="hidden">
+      <div class="invite-link-box">
+        <label>Your invite link</label>
+        <div class="invite-link" id="invite-link">https://...</div>
       </div>
 
-      <!-- Invalid View -->
-      <div id="view-invalid" class="view" style="text-align: center;">
-        <div class="status-icon error">❌</div>
-        <div class="success-title">Invalid Invite</div>
-        <p class="success-text">This invite link is not valid. Please check the link or request a new one.</p>
-        <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
+      <div class="btn-row">
+        <button class="btn btn-copy" id="copy-btn">📋 Copy</button>
+        <button class="btn btn-twitter" id="twitter-btn">𝕏 Share</button>
       </div>
 
-      <!-- Error View -->
-      <div id="view-error" class="view" style="text-align: center;">
-        <div class="status-icon error">⚠️</div>
-        <div class="success-title">Something Went Wrong</div>
-        <p class="success-text">Please try again later or contact support.</p>
-        <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
+      <button class="btn btn-secondary" id="generate-another-btn">
+        Generate Another Link
+      </button>
+
+      <div class="invites-remaining">
+        You have <strong id="invites-count-2">-</strong> invites remaining
       </div>
     </div>
 
-    <div class="season-text">Season 1</div>
+    <!-- Claim Screen (for invited users) -->
+    <div id="claim-screen" class="hidden">
+      <div class="invited-by">
+        <span>You've been invited by</span>
+        <strong id="inviter-address">0x0000...0000</strong>
+      </div>
+
+      <div class="input-group">
+        <label>Enter your wallet address to claim access</label>
+        <input type="text" id="wallet-input" placeholder="0x..." autocomplete="off" spellcheck="false">
+      </div>
+
+      <button class="btn btn-primary" id="submit-btn">
+        Claim Your Access
+      </button>
+
+      <div class="error-msg" id="claim-error"></div>
+    </div>
+  </div>
+
+  <!-- Wallet Selection Modal -->
+  <div class="modal-overlay hidden" id="wallet-modal">
+    <div class="modal">
+      <div class="modal-title">Connect Wallet</div>
+      
+      <div class="wallet-option" id="select-metamask">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
+        <div class="wallet-option-info">
+          <div class="wallet-option-name">MetaMask</div>
+          <div class="wallet-option-desc" id="metamask-status">Detecting...</div>
+        </div>
+      </div>
+
+      <div class="wallet-option" id="select-coinbase">
+        <img src="https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-wallet-logo.webp" alt="Coinbase">
+        <div class="wallet-option-info">
+          <div class="wallet-option-name">Coinbase Wallet</div>
+          <div class="wallet-option-desc" id="coinbase-status">Detecting...</div>
+        </div>
+      </div>
+
+      <div class="wallet-option" id="select-phantom">
+        <img src="https://phantom.app/img/phantom-logo.svg" alt="Phantom">
+        <div class="wallet-option-info">
+          <div class="wallet-option-name">Phantom</div>
+          <div class="wallet-option-desc" id="phantom-status">Detecting...</div>
+        </div>
+      </div>
+
+      <div class="wallet-option" id="select-trust">
+        <img src="https://trustwallet.com/assets/images/media/assets/TWT.svg" alt="Trust Wallet">
+        <div class="wallet-option-info">
+          <div class="wallet-option-name">Trust Wallet</div>
+          <div class="wallet-option-desc" id="trust-status">Detecting...</div>
+        </div>
+      </div>
+
+      <div class="wallet-option" id="select-injected">
+        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Browser Wallet">
+        <div class="wallet-option-info">
+          <div class="wallet-option-name">Other Wallet</div>
+          <div class="wallet-option-desc">Use browser extension</div>
+        </div>
+      </div>
+
+      <button class="modal-close" id="modal-close">Cancel</button>
+    </div>
   </div>
 
   <script>
-    var inviterWallet = '';
-    var currentCode = '';
-    var invitesRemaining = 0;
-    var walletSignature = '';
-    var signedMessage = '';
+    // State
+    let walletFromUrl = null;
+    let inviteCode = null;
+    let verifiedSignature = null;
+    let invitesRemaining = 0;
+    let selectedProvider = null;
 
-    function getPageType() {
-      var path = window.location.pathname;
-      var refMatch = path.match(/\/ref\/(0x[a-fA-F0-9]{40})/i);
-      if (refMatch) {
-        return { type: 'share', wallet: refMatch[1] };
-      }
-      var claimMatch = path.match(/\/claim\/([A-Za-z0-9]{6,12})/);
-      if (claimMatch) {
-        return { type: 'claim', code: claimMatch[1] };
-      }
-      return { type: 'invalid' };
-    }
+    // Wallet detection
+    const wallets = {
+      metamask: { provider: null, detected: false },
+      coinbase: { provider: null, detected: false },
+      phantom: { provider: null, detected: false },
+      trust: { provider: null, detected: false },
+      injected: { provider: null, detected: false }
+    };
 
-    function showView(viewName) {
-      var views = ['loading', 'verify', 'share', 'claim', 'success', 'used', 'invalid', 'error'];
-      views.forEach(function(v) {
-        var el = document.getElementById('view-' + v);
-        if (el) el.classList.remove('active');
-      });
-      var target = document.getElementById('view-' + viewName);
-      if (target) target.classList.add('active');
-    }
-
-    async function init() {
-      var page = getPageType();
-      if (page.type === 'share') {
-        inviterWallet = page.wallet;
-        document.getElementById('verify-wallet-display').textContent = inviterWallet.slice(0, 6) + '...' + inviterWallet.slice(-4);
-        
-        // Check if wallet is on allowlist first
-        try {
-          var response = await fetch('/.netlify/functions/check-invite?inviter=' + inviterWallet);
-          var data = await response.json();
-          if (data.valid) {
-            invitesRemaining = data.invitesRemaining;
-            showView('verify');
-          } else {
-            showView('invalid');
-          }
-        } catch (err) {
-          showView('error');
+    function detectWallets() {
+      // MetaMask - check for specific provider
+      if (window.ethereum?.providers) {
+        // Multiple providers (common with multiple extensions)
+        wallets.metamask.provider = window.ethereum.providers.find(p => p.isMetaMask && !p.isBraveWallet);
+        wallets.coinbase.provider = window.ethereum.providers.find(p => p.isCoinbaseWallet);
+        wallets.phantom.provider = window.ethereum.providers.find(p => p.isPhantom);
+        wallets.trust.provider = window.ethereum.providers.find(p => p.isTrust || p.isTrustWallet);
+      } else if (window.ethereum) {
+        // Single provider
+        if (window.ethereum.isMetaMask && !window.ethereum.isBraveWallet) {
+          wallets.metamask.provider = window.ethereum;
         }
-      } else if (page.type === 'claim') {
-        currentCode = page.code;
-        await loadClaimView();
+        if (window.ethereum.isCoinbaseWallet) {
+          wallets.coinbase.provider = window.ethereum;
+        }
+        if (window.ethereum.isPhantom) {
+          wallets.phantom.provider = window.ethereum;
+        }
+        if (window.ethereum.isTrust || window.ethereum.isTrustWallet) {
+          wallets.trust.provider = window.ethereum;
+        }
+      }
+
+      // Phantom also exposes on window.phantom.ethereum
+      if (window.phantom?.ethereum) {
+        wallets.phantom.provider = window.phantom.ethereum;
+      }
+
+      // Coinbase also exposes on window.coinbaseWalletExtension
+      if (window.coinbaseWalletExtension) {
+        wallets.coinbase.provider = window.coinbaseWalletExtension;
+      }
+
+      // Fallback injected
+      if (window.ethereum) {
+        wallets.injected.provider = window.ethereum;
+      }
+
+      // Update UI
+      updateWalletStatus('metamask', wallets.metamask.provider);
+      updateWalletStatus('coinbase', wallets.coinbase.provider);
+      updateWalletStatus('phantom', wallets.phantom.provider);
+      updateWalletStatus('trust', wallets.trust.provider);
+
+      // Hide "Other" if we detected a specific wallet
+      const hasSpecific = wallets.metamask.provider || wallets.coinbase.provider || 
+                          wallets.phantom.provider || wallets.trust.provider;
+      if (!hasSpecific && wallets.injected.provider) {
+        document.getElementById('select-injected').style.display = 'flex';
+      } else if (!wallets.injected.provider) {
+        document.getElementById('select-injected').classList.add('disabled');
+        document.getElementById('select-injected').querySelector('.wallet-option-desc').textContent = 'Not detected';
       } else {
-        showView('invalid');
+        document.getElementById('select-injected').style.display = 'none';
       }
     }
 
-    async function connectAndSign() {
-      var btn = document.getElementById('connect-wallet-btn');
-      var errorEl = document.getElementById('verify-error');
+    function updateWalletStatus(id, provider) {
+      const el = document.getElementById(`select-${id}`);
+      const statusEl = document.getElementById(`${id}-status`);
+      
+      if (provider) {
+        statusEl.textContent = 'Available';
+        statusEl.style.color = '#4ade80';
+        wallets[id].detected = true;
+      } else {
+        statusEl.textContent = 'Not detected';
+        el.classList.add('disabled');
+      }
+    }
+
+    function showModal() {
+      document.getElementById('wallet-modal').classList.remove('hidden');
+    }
+
+    function hideModal() {
+      document.getElementById('wallet-modal').classList.add('hidden');
+    }
+
+    async function connectWithProvider(provider) {
+      if (!provider) {
+        throw new Error('Wallet not available');
+      }
+
+      hideModal();
+      const btn = document.getElementById('connect-wallet-btn');
+      const errorEl = document.getElementById('verify-error');
       errorEl.classList.remove('show');
-
-      if (typeof window.ethereum === 'undefined') {
-        errorEl.textContent = 'No wallet found. Please install MetaMask or another Web3 wallet.';
-        errorEl.classList.add('show');
-        return;
-      }
-
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner">⏳</span> Connecting...';
+      btn.innerHTML = '🔄 Connecting...';
 
       try {
-        // Request account access
-        var accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        var connectedWallet = accounts[0];
-
-        // Check if connected wallet matches the URL wallet
-        if (connectedWallet.toLowerCase() !== inviterWallet.toLowerCase()) {
-          errorEl.textContent = 'Connected wallet does not match. Please connect with ' + inviterWallet.slice(0, 6) + '...' + inviterWallet.slice(-4);
-          errorEl.classList.add('show');
-          btn.disabled = false;
-          btn.innerHTML = '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg> Connect Wallet & Sign';
-          return;
+        // Request accounts
+        const accounts = await provider.request({ method: 'eth_requestAccounts' });
+        
+        if (!accounts || accounts.length === 0) {
+          throw new Error('No accounts returned');
         }
 
-        btn.innerHTML = '<span class="spinner">⏳</span> Sign message in wallet...';
+        const connectedWallet = accounts[0].toLowerCase();
+        const requiredWallet = walletFromUrl.toLowerCase();
 
-        // Create message to sign
-        var timestamp = Math.floor(Date.now() / 1000);
-        var message = 'Youmio Season 1 Invite Verification\n\nI am verifying ownership of this wallet to generate invite links.\n\nWallet: ' + inviterWallet.slice(0, 6) + '...' + inviterWallet.slice(-4) + '\nTimestamp: ' + timestamp;
-
-        // Request signature
-        var provider = new ethers.providers.Web3Provider(window.ethereum);
-        var signer = provider.getSigner();
-        var signature = await signer.signMessage(message);
-
-        walletSignature = signature;
-        signedMessage = message;
-
-        // Show share view
-        document.getElementById('invite-count').textContent = invitesRemaining + '/5 Invites Remaining';
-        if (invitesRemaining <= 0) {
-          document.getElementById('no-invites').style.display = 'block';
-          document.getElementById('generate-section').style.display = 'none';
+        // Check wallet matches
+        if (connectedWallet !== requiredWallet) {
+          throw new Error(`Wrong wallet connected.\n\nConnected: ${connectedWallet.slice(0,6)}...${connectedWallet.slice(-4)}\nRequired: ${requiredWallet.slice(0,6)}...${requiredWallet.slice(-4)}\n\nPlease switch to the correct wallet.`);
         }
-        showView('share');
+
+        // Sign message
+        btn.innerHTML = '✍️ Sign message in wallet...';
+        
+        const message = `Verify wallet ownership for Youmio Season 1 Invites\n\nWallet: ${walletFromUrl}\nTimestamp: ${Date.now()}`;
+        
+        const signature = await provider.request({
+          method: 'personal_sign',
+          params: [message, connectedWallet]
+        });
+
+        verifiedSignature = signature;
+        selectedProvider = provider;
+
+        // Check invites remaining
+        await checkInvites();
+
+        // Show generate screen
+        document.getElementById('verify-screen').classList.add('hidden');
+        document.getElementById('generate-screen').classList.remove('hidden');
+        document.getElementById('header-subtitle').textContent = 'Generate invite links';
 
       } catch (err) {
-        console.error('Wallet connection error:', err);
-        if (err.code === 4001) {
-          errorEl.textContent = 'You rejected the request. Please try again.';
-        } else {
-          errorEl.textContent = 'Failed to connect wallet. Please try again.';
-        }
+        console.error('Connection error:', err);
+        errorEl.textContent = err.message || 'Failed to connect. Please try again.';
         errorEl.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🔗 Connect Wallet & Sign';
       }
-
-      btn.disabled = false;
-      btn.innerHTML = '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg> Connect Wallet & Sign';
     }
 
-    async function loadClaimView() {
+    async function checkInvites() {
       try {
-        var response = await fetch('/.netlify/functions/check-code?code=' + currentCode);
-        var data = await response.json();
+        const res = await fetch(`/.netlify/functions/check-invite?inviter=${walletFromUrl}`);
+        const data = await res.json();
+        
         if (data.valid) {
-          document.getElementById('inviter-display').textContent = data.inviter;
-          showView('claim');
-        } else if (data.reason === 'already_used') {
-          showView('used');
-        } else {
-          showView('invalid');
+          invitesRemaining = data.invitesRemaining;
+          document.getElementById('invites-count').textContent = invitesRemaining;
+          document.getElementById('invites-count-2').textContent = invitesRemaining;
         }
-      } catch (err) {
-        showView('error');
+      } catch (e) {
+        console.error('Failed to check invites:', e);
       }
     }
 
     async function generateCode() {
-      var btn = document.getElementById('generate-btn');
+      const btn = document.getElementById('generate-btn');
+      const errorEl = document.getElementById('generate-error');
+      errorEl.classList.remove('show');
+
+      if (invitesRemaining <= 0) {
+        errorEl.textContent = 'No invites remaining.';
+        errorEl.classList.add('show');
+        return;
+      }
+
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner">⏳</span> Generating...';
+      btn.innerHTML = '⏳ Generating...';
 
       try {
-        var response = await fetch('/.netlify/functions/generate-code', {
+        const res = await fetch('/.netlify/functions/generate-code', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            inviter: inviterWallet,
-            signature: walletSignature,
-            message: signedMessage
+            inviter: walletFromUrl,
+            signature: verifiedSignature
           })
         });
 
-        var data = await response.json();
+        const data = await res.json();
 
-        if (data.success) {
-          var link = window.location.origin + '/claim/' + data.code;
-          document.getElementById('generated-link-text').textContent = link;
-          document.getElementById('generated-link-section').style.display = 'block';
-          
-          invitesRemaining = data.invitesRemaining;
-          document.getElementById('invite-count').textContent = invitesRemaining + '/5 Invites Remaining';
-          
-          if (invitesRemaining <= 0) {
-            document.getElementById('generate-another-btn').style.display = 'none';
-          }
-
-          currentCode = data.code;
-        } else {
-          alert(data.error || 'Failed to generate code');
+        if (!res.ok || !data.code) {
+          throw new Error(data.error || 'Failed to generate code');
         }
-      } catch (err) {
-        console.error('Error:', err);
-        alert('Network error. Please try again.');
-      }
 
-      btn.disabled = false;
-      btn.innerHTML = '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Generate Invite Link';
+        inviteCode = data.code;
+        invitesRemaining = data.invitesRemaining ?? (invitesRemaining - 1);
+
+        const link = `${window.location.origin}/invite/${inviteCode}`;
+        document.getElementById('invite-link').textContent = link;
+        document.getElementById('invites-count').textContent = invitesRemaining;
+        document.getElementById('invites-count-2').textContent = invitesRemaining;
+
+        document.getElementById('generate-screen').classList.add('hidden');
+        document.getElementById('share-screen').classList.remove('hidden');
+        document.getElementById('header-subtitle').textContent = 'Share your invite';
+
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '✨ Generate Invite Link';
+      }
     }
 
     function generateAnother() {
-      document.getElementById('generated-link-section').style.display = 'none';
-      document.getElementById('copy-btn').textContent = '📋 Copy Link';
-      document.getElementById('copy-btn').classList.remove('copied');
-      generateCode();
+      if (invitesRemaining <= 0) {
+        document.getElementById('generate-error').textContent = 'No invites remaining.';
+        document.getElementById('generate-error').classList.add('show');
+        document.getElementById('share-screen').classList.add('hidden');
+        document.getElementById('generate-screen').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('share-screen').classList.add('hidden');
+      document.getElementById('generate-screen').classList.remove('hidden');
+      document.getElementById('header-subtitle').textContent = 'Generate invite links';
     }
 
     function copyLink() {
-      var link = document.getElementById('generated-link-text').textContent;
+      const link = document.getElementById('invite-link').textContent;
       navigator.clipboard.writeText(link);
-      var btn = document.getElementById('copy-btn');
+      const btn = document.getElementById('copy-btn');
       btn.textContent = '✓ Copied!';
-      btn.classList.add('copied');
-      setTimeout(function() {
-        btn.textContent = '📋 Copy Link';
-        btn.classList.remove('copied');
-      }, 2000);
+      setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
     }
 
     function shareTwitter() {
-      var link = document.getElementById('generated-link-text').textContent;
-      var text = encodeURIComponent("I'm in Youmio Season 1! Join me and start earning Affinity 🚀");
-      var url = encodeURIComponent(link);
-      window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
+      const link = document.getElementById('invite-link').textContent;
+      const text = encodeURIComponent(`Join me in Youmio Season 1! 🚀\n\nClaim your access:\n${link}`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
     }
 
     async function submitWallet() {
-      var walletInput = document.getElementById('wallet-input');
-      var errorMsg = document.getElementById('error-msg');
-      var submitBtn = document.getElementById('submit-btn');
-      var wallet = walletInput.value.trim();
+      const input = document.getElementById('wallet-input');
+      const btn = document.getElementById('submit-btn');
+      const errorEl = document.getElementById('claim-error');
+      const wallet = input.value.trim();
 
-      errorMsg.classList.remove('show');
-
-      if (!wallet) {
-        errorMsg.textContent = 'Please enter your wallet address';
-        errorMsg.classList.add('show');
-        return;
-      }
+      errorEl.classList.remove('show');
 
       if (!/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
-        errorMsg.textContent = 'Please enter a valid Ethereum wallet address (0x + 40 characters)';
-        errorMsg.classList.add('show');
+        errorEl.textContent = 'Please enter a valid Ethereum wallet address.';
+        errorEl.classList.add('show');
         return;
       }
 
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner">⏳</span> Submitting...';
+      btn.disabled = true;
+      btn.textContent = 'Claiming...';
 
       try {
-        var response = await fetch('/.netlify/functions/claim-code', {
+        const res = await fetch('/.netlify/functions/submit-invite', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: currentCode, wallet: wallet })
+          body: JSON.stringify({ code: inviteCode, wallet })
         });
 
-        var data = await response.json();
+        const data = await res.json();
 
-        if (data.success) {
-          document.getElementById('success-wallet').textContent = wallet;
-          showView('success');
-        } else {
-          errorMsg.textContent = data.error || 'Something went wrong. Please try again.';
-          errorMsg.classList.add('show');
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || 'Failed to claim invite');
         }
+
+        document.getElementById('claim-screen').innerHTML = `
+          <div class="success-box">
+            <div class="check">🎉</div>
+            <p>You're In!</p>
+          </div>
+          <p style="text-align:center;color:rgba(255,255,255,0.7);line-height:1.6;">
+            Your wallet has been added to the Season 1 allowlist. You'll receive access soon!
+          </p>
+        `;
+
       } catch (err) {
-        errorMsg.textContent = 'Network error. Please try again.';
-        errorMsg.classList.add('show');
+        errorEl.textContent = err.message;
+        errorEl.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Claim Your Access';
+      }
+    }
+
+    function init() {
+      const path = window.location.pathname;
+
+      // /ref/{wallet} - inviter generating codes
+      const refMatch = path.match(/^\/ref\/?(0x[a-fA-F0-9]{40})?$/i);
+      if (refMatch) {
+        walletFromUrl = refMatch[1];
+        if (!walletFromUrl) {
+          document.querySelector('.card').innerHTML = `
+            <div style="text-align:center;padding:40px 20px;">
+              <div style="font-size:48px;margin-bottom:16px;">❌</div>
+              <h2 style="margin-bottom:12px;">Invalid Link</h2>
+              <p style="color:rgba(255,255,255,0.6);">No wallet address provided in URL.</p>
+            </div>
+          `;
+          return;
+        }
+        document.getElementById('wallet-to-verify').textContent = 
+          `${walletFromUrl.slice(0,6)}...${walletFromUrl.slice(-4)}`;
+        
+        // Detect wallets
+        detectWallets();
+        return;
       }
 
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Claim Your Access';
+      // /invite/{code} - invitee claiming
+      const inviteMatch = path.match(/^\/invite\/([A-Z0-9]+)$/i);
+      if (inviteMatch) {
+        inviteCode = inviteMatch[1];
+        document.getElementById('verify-screen').classList.add('hidden');
+        document.getElementById('claim-screen').classList.remove('hidden');
+        document.getElementById('header-subtitle').textContent = 'Claim your access';
+        document.querySelector('.card-title').textContent = 'You\'ve Been Invited!';
+        document.querySelector('.icon-box').textContent = '🎁';
+        
+        // Fetch inviter info
+        fetch(`/.netlify/functions/get-invite?code=${inviteCode}`)
+          .then(r => r.json())
+          .then(data => {
+            if (data.inviter) {
+              document.getElementById('inviter-address').textContent = data.inviter;
+            }
+          })
+          .catch(() => {});
+        return;
+      }
+
+      // Unknown path - show error
+      document.querySelector('.card').innerHTML = `
+        <div style="text-align:center;padding:40px 20px;">
+          <div style="font-size:48px;margin-bottom:16px;">🤔</div>
+          <h2 style="margin-bottom:12px;">Page Not Found</h2>
+          <p style="color:rgba(255,255,255,0.6);">This invite link doesn't look right.</p>
+        </div>
+      `;
     }
 
     // Event listeners
-    document.getElementById('connect-wallet-btn').addEventListener('click', connectAndSign);
+    document.getElementById('connect-wallet-btn').addEventListener('click', showModal);
+    document.getElementById('modal-close').addEventListener('click', hideModal);
+    document.getElementById('wallet-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'wallet-modal') hideModal();
+    });
+
+    document.getElementById('select-metamask').addEventListener('click', () => {
+      if (wallets.metamask.provider) connectWithProvider(wallets.metamask.provider);
+    });
+    document.getElementById('select-coinbase').addEventListener('click', () => {
+      if (wallets.coinbase.provider) connectWithProvider(wallets.coinbase.provider);
+    });
+    document.getElementById('select-phantom').addEventListener('click', () => {
+      if (wallets.phantom.provider) connectWithProvider(wallets.phantom.provider);
+    });
+    document.getElementById('select-trust').addEventListener('click', () => {
+      if (wallets.trust.provider) connectWithProvider(wallets.trust.provider);
+    });
+    document.getElementById('select-injected').addEventListener('click', () => {
+      if (wallets.injected.provider) connectWithProvider(wallets.injected.provider);
+    });
+
     document.getElementById('generate-btn').addEventListener('click', generateCode);
     document.getElementById('generate-another-btn').addEventListener('click', generateAnother);
     document.getElementById('copy-btn').addEventListener('click', copyLink);
     document.getElementById('twitter-btn').addEventListener('click', shareTwitter);
     document.getElementById('submit-btn').addEventListener('click', submitWallet);
-    document.getElementById('wallet-input').addEventListener('keypress', function(e) {
+    document.getElementById('wallet-input').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') submitWallet();
     });
 
