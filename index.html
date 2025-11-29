@@ -616,6 +616,15 @@
           if (invitesRemaining <= 0) {
             document.getElementById('generate-section').style.display = 'none';
           }
+        } else if (data.error === 'Signature expired, please sign again') {
+          // Signature expired, need to re-sign
+          errorEl.textContent = 'Session expired. Please re-verify your wallet.';
+          errorEl.classList.add('show');
+          walletSignature = '';
+          signedMessage = '';
+          setTimeout(function() {
+            showView('verify');
+          }, 2000);
         } else {
           errorEl.textContent = data.error || 'Failed to generate code. Please try again.';
           errorEl.classList.add('show');
