@@ -1,3 +1,8 @@
+// ============================================================
+// FILE: netlify/functions/get-codes.js
+// Returns existing unused codes for a wallet
+// ============================================================
+
 const { google } = require('googleapis');
 
 exports.handler = async (event) => {
