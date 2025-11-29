@@ -436,6 +436,9 @@
 
         console.log('Wallet verified, signature stored');
 
+        // Load any existing codes for this wallet
+        await loadExistingCodes();
+
         // Show share view
         document.getElementById('invite-count').textContent = invitesRemaining + '/5 Invites Remaining';
         if (invitesRemaining <= 0) {
@@ -510,6 +513,26 @@
         await loadClaimView();
       } else {
         showView('invalid');
+      }
+    }
+
+    async function loadExistingCodes() {
+      try {
+        var response = await fetch('/.netlify/functions/get-codes?inviter=' + inviterWallet);
+        var data = await response.json();
+        
+        if (data.success && data.codes && data.codes.length > 0) {
+          generatedCodes = data.codes;
+          displayGeneratedCodes();
+          document.getElementById('generated-links-section').style.display = 'block';
+          
+          if (generatedCodes.length > 1) {
+            document.getElementById('copy-all-container').style.display = 'block';
+          }
+        }
+      } catch (err) {
+        console.error('Error loading existing codes:', err);
+        // Not critical, just means no existing codes to show
       }
     }
 
