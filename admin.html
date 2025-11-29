@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Youmio Invite Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #0a0a0f; min-height: 100vh; padding: 20px; color: #fff; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    h1 { font-size: 24px; margin-bottom: 24px; color: #f9a8d4; }
+    
+    .login-card { max-width: 400px; margin: 100px auto; background: rgba(22,22,31,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 32px; }
+    .login-card h2 { font-size: 20px; margin-bottom: 20px; text-align: center; }
+    .login-card input { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 14px; margin-bottom: 16px; }
+    .login-card input:focus { outline: none; border-color: #ec4899; }
+    .login-card button { width: 100%; padding: 14px; background: linear-gradient(to right, #ec4899, #db2777); border: none; color: white; font-weight: 600; border-radius: 8px; cursor: pointer; }
+    .login-card button:hover { filter: brightness(1.1); }
+    .login-card .error { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; display: none; }
+    .login-card .error.show { display: block; }
+
+    .dashboard { display: none; }
+    .dashboard.show { display: block; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: rgba(22,22,31,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; }
+    .stat-label { color: #9ca3af; font-size: 13px; margin-bottom: 8px; }
+    .stat-value { font-size: 28px; font-weight: 700; color: #f9a8d4; }
+    .stat-value.green { color: #4ade80; }
+    .stat-value.blue { color: #60a5fa; }
+    .stat-value.orange { color: #fb923c; }
+
+    .section { background: rgba(22,22,31,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .section h3 { font-size: 16px; margin-bottom: 16px; color: #d1d5db; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 10px 12px; color: #9ca3af; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    tr:hover { background: rgba(255,255,255,0.02); }
+    .mono { font-family: monospace; color: #a5b4fc; }
+
+    .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding-top: 20px; }
+    .bar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; }
+    .bar { width: 100%; background: linear-gradient(to top, #ec4899, #f9a8d4); border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s; }
+    .bar-label { font-size: 11px; color: #9ca3af; margin-top: 8px; }
+    .bar-value { font-size: 12px; color: #fff; margin-bottom: 4px; }
+
+    .refresh-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; margin-bottom: 24px; }
+    .refresh-btn:hover { background: rgba(255,255,255,0.15); }
+
+    .loading { text-align: center; padding: 40px; color: #9ca3af; }
+    .spinner { display: inline-block; width: 24px; height: 24px; border: 2px solid rgba(236,72,153,0.3); border-top-color: #ec4899; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Login -->
+    <div class="login-card" id="login-section">
+      <h2>🔐 Admin Login</h2>
+      <input type="password" id="password-input" placeholder="Enter admin password" autocomplete="off">
+      <button onclick="login()">Login</button>
+      <p class="error" id="login-error"></p>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard-section">
+      <h1>📊 Youmio Invite System - Admin Dashboard</h1>
+      
+      <button class="refresh-btn" onclick="fetchStats()">🔄 Refresh Stats</button>
+
+      <div id="stats-content">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p style="margin-top: 12px;">Loading stats...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let adminPassword = '';
+
+    document.getElementById('password-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') login();
+    });
+
+    async function login() {
+      const password = document.getElementById('password-input').value;
+      const errorEl = document.getElementById('login-error');
+      errorEl.classList.remove('show');
+
+      if (!password) {
+        errorEl.textContent = 'Please enter password';
+        errorEl.classList.add('show');
+        return;
+      }
+
+      try {
+        const res = await fetch('/.netlify/functions/admin-stats', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          adminPassword = password;
+          document.getElementById('login-section').style.display = 'none';
+          document.getElementById('dashboard-section').classList.add('show');
+          renderStats(data.stats);
+        } else {
+          errorEl.textContent = data.error || 'Invalid password';
+          errorEl.classList.add('show');
+        }
+      } catch (err) {
+        errorEl.textContent = 'Network error';
+        errorEl.classList.add('show');
+      }
+    }
+
+    async function fetchStats() {
+      document.getElementById('stats-content').innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <p style="margin-top: 12px;">Loading stats...</p>
+        </div>
+      `;
+
+      try {
+        const res = await fetch('/.netlify/functions/admin-stats', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: adminPassword })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          renderStats(data.stats);
+        }
+      } catch (err) {
+        document.getElementById('stats-content').innerHTML = '<p style="color: #f87171;">Failed to load stats</p>';
+      }
+    }
+
+    function renderStats(stats) {
+      const maxClaims = Math.max(...Object.values(stats.claimsPerDay), 1);
+      const sortedDays = Object.entries(stats.claimsPerDay).sort((a, b) => a[0].localeCompare(b[0]));
+
+      document.getElementById('stats-content').innerHTML = `
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Allowlisted</div>
+            <div class="stat-value">${stats.totalAllowlisted.toLocaleString()}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Invites Available</div>
+            <div class="stat-value blue">${stats.totalInvitesAvailable.toLocaleString()}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Codes Generated</div>
+            <div class="stat-value orange">${stats.totalCodesGenerated.toLocaleString()}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Codes Claimed</div>
+            <div class="stat-value green">${stats.totalCodesClaimed.toLocaleString()}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Unclaimed Codes</div>
+            <div class="stat-value">${stats.totalCodesUnclaimed.toLocaleString()}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Claim Rate</div>
+            <div class="stat-value green">${stats.claimRate}%</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>📈 Claims (Last 7 Days)</h3>
+          <div class="bar-chart">
+            ${sortedDays.map(([date, count]) => `
+              <div class="bar-wrapper">
+                <div class="bar-value">${count}</div>
+                <div class="bar" style="height: ${(count / maxClaims) * 100}px;"></div>
+                <div class="bar-label">${new Date(date).toLocaleDateString('en', { weekday: 'short' })}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>🏆 Top Inviters</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Wallet</th>
+                <th>Codes Generated</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${stats.topInviters.map((inv, i) => `
+                <tr>
+                  <td>${i + 1}</td>
+                  <td class="mono">${inv.wallet}</td>
+                  <td>${inv.codesGenerated}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <h3>🕐 Recent Claims</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Invitee</th>
+                <th>Invited By</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${stats.recentClaims.map(claim => `
+                <tr>
+                  <td class="mono">${claim.invitee}</td>
+                  <td class="mono">${claim.inviter}</td>
+                  <td>${new Date(claim.claimedAt).toLocaleString()}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
