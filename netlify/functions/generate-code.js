@@ -1,9 +1,10 @@
 // ============================================================
 // FILE: netlify/functions/generate-code.js
-// Generates a unique one-time invite code for an inviter
+// Generates a unique one-time invite code - REQUIRES VERIFIED SESSION
 // ============================================================
 
 const { google } = require('googleapis');
+const { ethers } = require('ethers');
 
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW = 60 * 1000;
@@ -56,12 +57,41 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON' }) };
   }
 
-  const { inviter } = body;
+  const { inviter, signature, message } = body;
 
   if (!inviter || !/^0x[a-fA-F0-9]{40}$/.test(inviter)) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid wallet' }) };
   }
 
+  // VERIFY SIGNATURE
+  if (!signature || !message) {
+    return { statusCode: 401, headers, body: JSON.stringify({ error: 'Signature required' }) };
+  }
+
+  try {
+    // Recover address from signature
+    const recoveredAddress = ethers.verifyMessage(message, signature);
+
+    // Check if recovered address matches claimed wallet
+    if (recoveredAddress.toLowerCase() !== inviter.toLowerCase()) {
+      return { statusCode: 401, headers, body: JSON.stringify({ error: 'Wallet verification failed' }) };
+    }
+
+    // Check message is recent (within 5 minutes)
+    const timestampMatch = message.match(/Timestamp: (\d+)/);
+    if (timestampMatch) {
+      const messageTime = parseInt(timestampMatch[1]) * 1000;
+      const now = Date.now();
+      if (now - messageTime > 5 * 60 * 1000) {
+        return { statusCode: 401, headers, body: JSON.stringify({ error: 'Signature expired, please sign again' }) };
+      }
+    }
+  } catch (err) {
+    console.error('Signature verification failed:', err);
+    return { statusCode: 401, headers, body: JSON.stringify({ error: 'Invalid signature' }) };
+  }
+
+  // SIGNATURE VERIFIED - proceed with code generation
   try {
     const auth = new google.auth.GoogleAuth({
       credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY),
