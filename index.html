@@ -7,6 +7,12 @@
   <meta name="description" content="You've been invited to Youmio Season 1. Claim your access now.">
   <meta property="og:title" content="You're Invited to Youmio Season 1">
   <meta property="og:description" content="Claim your spot and start earning Affinity.">
+  <meta property="og:image" content="https://youmioinvite.netlify.app/twitter-card.png">
+  <meta property="og:url" content="https://youmioinvite.netlify.app">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="You're Invited to Youmio Season 1">
+  <meta name="twitter:description" content="Claim your spot and start earning Affinity before it's too late.">
+  <meta name="twitter:image" content="https://youmioinvite.netlify.app/twitter-card.png">
   <link rel="icon" href="/favicon.ico">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
   <style>
@@ -285,7 +291,7 @@
       </div>
 
       <div class="wallet-option" id="select-coinbase">
-        <img src="https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-wallet-logo.webp" alt="Coinbase">
+        <img src="https://www.cdnlogo.com/logos/c/14/coinbase.svg" alt="Coinbase">
         <div class="wallet-option-info">
           <div class="wallet-option-name">Coinbase Wallet</div>
           <div class="wallet-option-desc" id="coinbase-status">Detecting...</div>
@@ -293,7 +299,7 @@
       </div>
 
       <div class="wallet-option" id="select-phantom">
-        <img src="https://phantom.app/img/phantom-logo.svg" alt="Phantom">
+        <img src="https://www.cdnlogo.com/logos/p/78/phantom.svg" alt="Phantom">
         <div class="wallet-option-info">
           <div class="wallet-option-name">Phantom</div>
           <div class="wallet-option-desc" id="phantom-status">Detecting...</div>
@@ -301,7 +307,7 @@
       </div>
 
       <div class="wallet-option" id="select-rabby">
-        <img src="https://rabby.io/assets/images/logo.svg" alt="Rabby">
+        <img src="https://eacdn.imgix.net/general/Rabby.png" alt="Rabby">
         <div class="wallet-option-info">
           <div class="wallet-option-name">Rabby Wallet</div>
           <div class="wallet-option-desc" id="rabby-status">Detecting...</div>
@@ -441,10 +447,16 @@
 
         // Show share view
         document.getElementById('invite-count').textContent = invitesRemaining + '/5 Invites Remaining';
+        
+        // Only hide generate button if NO invites remaining
         if (invitesRemaining <= 0) {
           document.getElementById('no-invites').style.display = 'block';
           document.getElementById('generate-section').style.display = 'none';
+        } else {
+          document.getElementById('no-invites').style.display = 'none';
+          document.getElementById('generate-section').style.display = 'block';
         }
+        
         showView('share');
 
       } catch (err) {
@@ -647,7 +659,7 @@
 
     function shareSpecificLink(index) {
       var link = window.location.origin + '/claim/' + generatedCodes[index];
-      var text = encodeURIComponent("I'm in Youmio Season 1! Join me and start earning Affinity 🚀");
+      var text = encodeURIComponent("I'm in Youmio Season 1! 🚀\n\nJoin me and start earning Affinity before it's too late.\n\nClaim your invite:");
       var url = encodeURIComponent(link);
       window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
     }
