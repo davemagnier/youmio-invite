@@ -477,6 +477,8 @@
 
     async function init() {
       var page = getPageType();
+      console.log('Page type:', page);
+      
       if (page.type === 'share') {
         inviterWallet = page.wallet;
         document.getElementById('verify-wallet-display').textContent = inviterWallet.slice(0, 6) + '...' + inviterWallet.slice(-4);
@@ -484,15 +486,21 @@
         detectWallets();
         
         try {
+          console.log('Checking invite for:', inviterWallet);
           var response = await fetch('/.netlify/functions/check-invite?inviter=' + inviterWallet);
+          console.log('Response status:', response.status);
           var data = await response.json();
+          console.log('Response data:', data);
+          
           if (data.valid) {
             invitesRemaining = data.invitesRemaining;
             showView('verify');
           } else {
+            console.log('Invalid response, reason:', data.reason);
             showView('invalid');
           }
         } catch (err) {
+          console.error('Error checking invite:', err);
           showView('error');
         }
       } else if (page.type === 'claim') {
