@@ -2,10 +2,6 @@
   functions = "netlify/functions"
   publish = "."
 
-[functions]
-  [functions.sync-privy]
-    schedule = "*/15 * * * *"
-
 [[redirects]]
   from = "/ref/*"
   to = "/index.html"
