@@ -51,6 +51,9 @@ exports.handler = async (event) => {
 
     const transaction = moonpayEvent.data || moonpayEvent;
     
+    // Log the full payload for debugging
+    console.log('Moonpay payload:', JSON.stringify(moonpayEvent, null, 2));
+    
     // Extract data - adjust field names based on actual Moonpay payload
     const subscriberWallet = transaction.walletAddress || transaction.wallet_address || transaction.cryptoTransactionId || '';
     const subscriberEmail = transaction.email || transaction.customerEmail || '';
@@ -62,6 +65,8 @@ exports.handler = async (event) => {
     let tier = null;
     const paymentType = transaction.paymentType || transaction.payment_type || transaction.type || '';
     const transactionName = transaction.name || transaction.productName || '';
+    
+    console.log('Payment type:', paymentType, 'Name:', transactionName, 'Wallet:', subscriberWallet);
     
     if (transaction.metadata?.type === 'subscription') {
       // Explicit subscription flag in metadata (preferred)
