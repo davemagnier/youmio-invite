@@ -49,6 +49,14 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ received: true, skipped: true }) };
     }
 
+    // For checkout sessions, only process subscription mode (not one-off payments)
+    const subscription = stripeEvent.data.object;
+    if (stripeEvent.type === 'checkout.session.completed') {
+      if (subscription.mode !== 'subscription') {
+        return { statusCode: 200, headers, body: JSON.stringify({ received: true, skipped: 'not_subscription' }) };
+      }
+    }
+
     // Extract subscription data
     const subscription = stripeEvent.data.object;
     const metadata = subscription.metadata || {};
@@ -106,6 +114,20 @@ exports.handler = async (event) => {
         body: JSON.stringify({ 
           received: true, 
           skipped: 'not_invited',
+          subscriber: subscriberWallet
+        })
+      };
+    }
+
+    // Check if this wallet already claimed a bonus
+    const alreadyClaimed = await checkAlreadyClaimed(accessToken, subscriberWallet);
+    if (alreadyClaimed) {
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ 
+          received: true, 
+          skipped: 'already_claimed',
           subscriber: subscriberWallet
         })
       };
@@ -171,6 +193,27 @@ function verifyStripeSignature(payload, sig, secret) {
   } catch (e) {
     return false;
   }
+}
+
+// Check if wallet already has a conversion recorded
+async function checkAlreadyClaimed(accessToken, wallet) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Conversions!A:A`;
+  const response = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  
+  if (!response.ok) return false;
+  
+  const data = await response.json();
+  const rows = data.values || [];
+  
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i][0]?.toLowerCase() === wallet.toLowerCase()) {
+      return true;
+    }
+  }
+  
+  return false;
 }
 
 // Find who invited this wallet
