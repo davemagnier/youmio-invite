@@ -1,10 +1,9 @@
 // ============================================
-// SYNC PRIVY - Uses your existing env var names
+// SYNC PRIVY - Complete working version
 // ============================================
 
 const crypto = require('crypto');
 
-// Parse the service account JSON to get email and private key
 let GOOGLE_SERVICE_ACCOUNT_EMAIL;
 let GOOGLE_PRIVATE_KEY;
 
@@ -12,9 +11,7 @@ try {
   const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY || '{}');
   GOOGLE_SERVICE_ACCOUNT_EMAIL = serviceAccount.client_email;
   GOOGLE_PRIVATE_KEY = serviceAccount.private_key;
-} catch (e) {
-  // Will be caught by missing vars check below
-}
+} catch (e) {}
 
 const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID;
 const PRIVY_APP_ID = process.env.PRIVY_APP_ID;
@@ -27,8 +24,8 @@ exports.handler = async (event) => {
     'Content-Type': 'application/json'
   };
 
-  // Auth check - skip for scheduled runs
-  const isScheduled = event.headers?.['x-netlify-event'] === 'schedule' || !event.queryStringParameters;
+  // Auth check - skip for scheduled runs (no queryStringParameters)
+  const isScheduled = !event.queryStringParameters || Object.keys(event.queryStringParameters).length === 0;
   const providedKey = event.queryStringParameters?.key;
   
   if (!isScheduled && SYNC_KEY && providedKey !== SYNC_KEY) {
@@ -37,8 +34,8 @@ exports.handler = async (event) => {
 
   // Check env vars
   const missing = [];
-  if (!GOOGLE_SERVICE_ACCOUNT_EMAIL) missing.push('GOOGLE_SERVICE_ACCOUNT_EMAIL (from GOOGLE_SERVICE_ACCOUNT_KEY)');
-  if (!GOOGLE_PRIVATE_KEY) missing.push('GOOGLE_PRIVATE_KEY (from GOOGLE_SERVICE_ACCOUNT_KEY)');
+  if (!GOOGLE_SERVICE_ACCOUNT_EMAIL) missing.push('GOOGLE_SERVICE_ACCOUNT_EMAIL');
+  if (!GOOGLE_PRIVATE_KEY) missing.push('GOOGLE_PRIVATE_KEY');
   if (!SPREADSHEET_ID) missing.push('GOOGLE_SPREADSHEET_ID');
   if (!PRIVY_APP_ID) missing.push('PRIVY_APP_ID');
   if (!PRIVY_APP_SECRET) missing.push('PRIVY_APP_SECRET');
@@ -122,12 +119,7 @@ exports.handler = async (event) => {
         success: successCount > 0,
         synced: successCount,
         total: walletsToSync.length,
-        privyError: lastError,
-        debug: {
-          appIdLength: PRIVY_APP_ID?.length,
-          appIdStart: PRIVY_APP_ID?.substring(0, 8),
-          secretLength: PRIVY_APP_SECRET?.length
-        }
+        privyError: lastError
       })
     };
     
@@ -196,18 +188,16 @@ async function addToPrivy(wallets) {
     body: JSON.stringify(wallets.map(w => ({ type: 'wallet', value: w })))
   });
   
-  // Treat as success if: 200/201 OR if already exists (400/409)
   if (response.ok) {
     return { success: true };
   }
   
   const errorText = await response.text();
   
-  // If wallets already exist, that's fine - treat as success
+  // If wallets already exist, treat as success
   if (errorText.includes('already') || response.status === 409) {
     return { success: true, alreadyExists: true };
   }
   
-  console.log('Privy error:', response.status, errorText);
   return { success: false, status: response.status, error: errorText };
 }
