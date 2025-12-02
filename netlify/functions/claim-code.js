@@ -1,6 +1,7 @@
 // ============================================================
 // FILE: netlify/functions/claim-code.js
 // Claims an invite code with a wallet address
+// Also adds invitee to Allowlist with 10 invites
 // ============================================================
 
 const { google } = require('googleapis');
@@ -135,14 +136,25 @@ exports.handler = async (event) => {
       }
     });
 
-    // Append to ClaimedInvites tab for easy copy/paste
+    // Append to ClaimedInvites tab
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: 'ClaimedInvites!A:C',
+      range: 'ClaimedInvites!A:D',
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       requestBody: {
-        values: [[wallet, inviterWallet, claimedAt]]
+        values: [[wallet, inviterWallet, claimedAt, code]]
+      }
+    });
+
+    // ADD INVITEE TO ALLOWLIST WITH 10 INVITES
+    await sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range: 'Allowlist!A:B',
+      valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
+      requestBody: {
+        values: [[wallet, 10]]
       }
     });
 
