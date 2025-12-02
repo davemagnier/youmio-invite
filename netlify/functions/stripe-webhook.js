@@ -56,6 +56,11 @@ exports.handler = async (event) => {
 
     const metadata = subscription.metadata || {};
     
+    // Only process if metadata.type = 'subscription'
+    if (metadata.type !== 'subscription') {
+      return { statusCode: 200, headers, body: JSON.stringify({ received: true, skipped: 'not_subscription' }) };
+    }
+    
     const subscriberWallet = metadata.wallet_address || '';
     const subscriberUsername = metadata.username || '';
     const subscriberEmail = subscription.customer_email || metadata.email || '';
