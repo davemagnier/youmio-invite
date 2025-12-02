@@ -56,8 +56,13 @@ exports.handler = async (event) => {
     const subscriberEmail = transaction.email || transaction.customerEmail || '';
     const subscriberUsername = transaction.externalCustomerId || transaction.metadata?.username || '';
     
-    // Determine tier from amount or metadata
-    let tier = (transaction.metadata?.tier || transaction.baseCurrencyAmount > 50 ? 'pro' : 'standard').toLowerCase();
+    // Determine tier from metadata or amount
+    let tier = 'standard';
+    if (transaction.metadata?.tier) {
+      tier = transaction.metadata.tier.toLowerCase();
+    } else if (transaction.baseCurrencyAmount > 50) {
+      tier = 'pro';
+    }
     if (!STAR_BONUSES[tier]) tier = 'standard';
 
     if (!subscriberWallet) {
