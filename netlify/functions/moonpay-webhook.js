@@ -71,6 +71,19 @@ exports.handler = async (event) => {
     // Look up inviter from ClaimedInvites
     const inviterData = await findInviter(accessToken, subscriberWallet);
 
+    // Only track if this subscriber was invited by someone
+    if (!inviterData.wallet) {
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ 
+          received: true, 
+          skipped: 'not_invited',
+          subscriber: subscriberWallet
+        })
+      };
+    }
+
     // Calculate star bonus
     const starsBonus = STAR_BONUSES[tier];
 
