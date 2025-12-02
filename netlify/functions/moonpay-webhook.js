@@ -57,27 +57,32 @@ exports.handler = async (event) => {
     const subscriberUsername = transaction.externalCustomerId || transaction.metadata?.username || '';
     const amount = parseFloat(transaction.baseCurrencyAmount || transaction.amount || 0);
     
-    // Only process subscription payments (Standard = $9.99, Pro = $29.99)
-    // Skip star/diamond pack purchases and other one-off payments
+    // Only process subscription payments
+    // Check metadata.type OR Moonpay's payment type field
     let tier = null;
+    const paymentType = transaction.paymentType || transaction.payment_type || transaction.type || '';
+    const transactionName = transaction.name || transaction.productName || '';
     
     if (transaction.metadata?.type === 'subscription') {
-      // Explicit subscription flag in metadata
+      // Explicit subscription flag in metadata (preferred)
       tier = transaction.metadata?.tier?.toLowerCase() || 'standard';
-    } else if (amount >= 29 && amount <= 31) {
-      // Pro subscription (~$29.99)
-      tier = 'pro';
-    } else if (amount >= 9 && amount <= 11) {
-      // Standard subscription (~$9.99)
-      tier = 'standard';
+    } else if (paymentType.toLowerCase() === 'subscription') {
+      // Moonpay's payment type field
+      if (transactionName.toLowerCase().includes('pro')) {
+        tier = 'pro';
+      } else {
+        tier = 'standard';
+      }
     }
+    
+    if (!STAR_BONUSES[tier]) tier = 'standard';
     
     // Skip if not a subscription payment
     if (!tier) {
       return { 
         statusCode: 200, 
         headers, 
-        body: JSON.stringify({ received: true, skipped: 'not_subscription', amount }) 
+        body: JSON.stringify({ received: true, skipped: 'not_subscription' }) 
       };
     }
 
