@@ -27,9 +27,11 @@ exports.handler = async (event) => {
     'Content-Type': 'application/json'
   };
 
-  // Auth check
+  // Auth check - skip for scheduled runs
+  const isScheduled = event.headers?.['x-netlify-event'] === 'schedule' || !event.queryStringParameters;
   const providedKey = event.queryStringParameters?.key;
-  if (SYNC_KEY && providedKey !== SYNC_KEY) {
+  
+  if (!isScheduled && SYNC_KEY && providedKey !== SYNC_KEY) {
     return { statusCode: 401, headers, body: JSON.stringify({ error: 'Unauthorized' }) };
   }
 
