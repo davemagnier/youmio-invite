@@ -54,26 +54,46 @@ exports.handler = async (event) => {
     // Log the full payload for debugging
     console.log('Moonpay payload:', JSON.stringify(moonpayEvent, null, 2));
     
-    // Extract data - adjust field names based on actual Moonpay payload
-    const subscriberWallet = transaction.walletAddress || transaction.wallet_address || transaction.cryptoTransactionId || '';
-    const subscriberEmail = transaction.email || transaction.customerEmail || '';
-    const subscriberUsername = transaction.externalCustomerId || transaction.metadata?.username || '';
+    // Extract data - check multiple possible field names
+    const subscriberWallet = transaction.walletAddress || 
+                             transaction.wallet_address || 
+                             transaction.cryptoTransactionId ||
+                             transaction.destinationWalletAddress ||
+                             moonpayEvent.walletAddress ||
+                             '';
+    const subscriberEmail = transaction.email || 
+                            transaction.customerEmail || 
+                            moonpayEvent.email ||
+                            '';
+    const subscriberUsername = transaction.externalCustomerId || 
+                               transaction.metadata?.username || 
+                               moonpayEvent.externalCustomerId ||
+                               '';
     const amount = parseFloat(transaction.baseCurrencyAmount || transaction.amount || 0);
     
     // Only process subscription payments
     // Check metadata.type OR Moonpay's payment type field
     let tier = null;
-    const paymentType = transaction.paymentType || transaction.payment_type || transaction.type || '';
-    const transactionName = transaction.name || transaction.productName || '';
+    const paymentType = (transaction.paymentType || 
+                         transaction.payment_type || 
+                         transaction.type ||
+                         moonpayEvent.paymentType ||
+                         moonpayEvent.type ||
+                         '').toLowerCase();
+    const transactionName = (transaction.name || 
+                             transaction.productName ||
+                             transaction.baseCurrencyCode ||
+                             moonpayEvent.name ||
+                             '').toLowerCase();
     
     console.log('Payment type:', paymentType, 'Name:', transactionName, 'Wallet:', subscriberWallet);
     
     if (transaction.metadata?.type === 'subscription') {
       // Explicit subscription flag in metadata (preferred)
       tier = transaction.metadata?.tier?.toLowerCase() || 'standard';
-    } else if (paymentType.toLowerCase() === 'subscription') {
+    } else if (paymentType === 'subscription' || paymentType.includes('subscription')) {
       // Moonpay's payment type field
-      if (transactionName.toLowerCase().includes('pro')) {
+      if (transactionName.includes('pro')) {
         tier = 'pro';
       } else {
         tier = 'standard';
