@@ -55,15 +55,31 @@ exports.handler = async (event) => {
     const subscriberWallet = transaction.walletAddress || transaction.wallet_address || transaction.cryptoTransactionId || '';
     const subscriberEmail = transaction.email || transaction.customerEmail || '';
     const subscriberUsername = transaction.externalCustomerId || transaction.metadata?.username || '';
+    const amount = parseFloat(transaction.baseCurrencyAmount || transaction.amount || 0);
     
-    // Determine tier from metadata or amount
-    let tier = 'standard';
-    if (transaction.metadata?.tier) {
-      tier = transaction.metadata.tier.toLowerCase();
-    } else if (transaction.baseCurrencyAmount > 50) {
+    // Only process subscription payments (Standard = $9.99, Pro = $29.99)
+    // Skip star/diamond pack purchases and other one-off payments
+    let tier = null;
+    
+    if (transaction.metadata?.type === 'subscription') {
+      // Explicit subscription flag in metadata
+      tier = transaction.metadata?.tier?.toLowerCase() || 'standard';
+    } else if (amount >= 29 && amount <= 31) {
+      // Pro subscription (~$29.99)
       tier = 'pro';
+    } else if (amount >= 9 && amount <= 11) {
+      // Standard subscription (~$9.99)
+      tier = 'standard';
     }
-    if (!STAR_BONUSES[tier]) tier = 'standard';
+    
+    // Skip if not a subscription payment
+    if (!tier) {
+      return { 
+        statusCode: 200, 
+        headers, 
+        body: JSON.stringify({ received: true, skipped: 'not_subscription', amount }) 
+      };
+    }
 
     if (!subscriberWallet) {
       console.log('No wallet in transaction, skipping');
@@ -84,6 +100,20 @@ exports.handler = async (event) => {
         body: JSON.stringify({ 
           received: true, 
           skipped: 'not_invited',
+          subscriber: subscriberWallet
+        })
+      };
+    }
+
+    // Check if this wallet already claimed a bonus
+    const alreadyClaimed = await checkAlreadyClaimed(accessToken, subscriberWallet);
+    if (alreadyClaimed) {
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ 
+          received: true, 
+          skipped: 'already_claimed',
           subscriber: subscriberWallet
         })
       };
@@ -144,6 +174,27 @@ function verifyMoonpaySignature(payload, sig, secret) {
   } catch (e) {
     return false;
   }
+}
+
+// Check if wallet already has a conversion recorded
+async function checkAlreadyClaimed(accessToken, wallet) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Conversions!A:A`;
+  const response = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  
+  if (!response.ok) return false;
+  
+  const data = await response.json();
+  const rows = data.values || [];
+  
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i][0]?.toLowerCase() === wallet.toLowerCase()) {
+      return true;
+    }
+  }
+  
+  return false;
 }
 
 // Find who invited this wallet
