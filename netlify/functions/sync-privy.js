@@ -1,13 +1,22 @@
 // ============================================
-// SYNC PRIVY - HTTP CALLABLE VERSION
-// Call via: /.netlify/functions/sync-privy?key=youmio-sync-2024
+// SYNC PRIVY - Uses your existing env var names
 // ============================================
 
 const crypto = require('crypto');
 
-const GOOGLE_SERVICE_ACCOUNT_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
+// Parse the service account JSON to get email and private key
+let GOOGLE_SERVICE_ACCOUNT_EMAIL;
+let GOOGLE_PRIVATE_KEY;
+
+try {
+  const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY || '{}');
+  GOOGLE_SERVICE_ACCOUNT_EMAIL = serviceAccount.client_email;
+  GOOGLE_PRIVATE_KEY = serviceAccount.private_key;
+} catch (e) {
+  // Will be caught by missing vars check below
+}
+
+const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID;
 const PRIVY_APP_ID = process.env.PRIVY_APP_ID;
 const PRIVY_APP_SECRET = process.env.PRIVY_APP_SECRET;
 const SYNC_KEY = process.env.SYNC_KEY || '';
@@ -26,9 +35,9 @@ exports.handler = async (event) => {
 
   // Check env vars
   const missing = [];
-  if (!GOOGLE_SERVICE_ACCOUNT_EMAIL) missing.push('GOOGLE_SERVICE_ACCOUNT_EMAIL');
-  if (!GOOGLE_PRIVATE_KEY) missing.push('GOOGLE_PRIVATE_KEY');
-  if (!SPREADSHEET_ID) missing.push('SPREADSHEET_ID');
+  if (!GOOGLE_SERVICE_ACCOUNT_EMAIL) missing.push('GOOGLE_SERVICE_ACCOUNT_EMAIL (from GOOGLE_SERVICE_ACCOUNT_KEY)');
+  if (!GOOGLE_PRIVATE_KEY) missing.push('GOOGLE_PRIVATE_KEY (from GOOGLE_SERVICE_ACCOUNT_KEY)');
+  if (!SPREADSHEET_ID) missing.push('GOOGLE_SPREADSHEET_ID');
   if (!PRIVY_APP_ID) missing.push('PRIVY_APP_ID');
   if (!PRIVY_APP_SECRET) missing.push('PRIVY_APP_SECRET');
   
