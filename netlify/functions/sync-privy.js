@@ -120,7 +120,12 @@ exports.handler = async (event) => {
         success: successCount > 0,
         synced: successCount,
         total: walletsToSync.length,
-        privyError: lastError
+        privyError: lastError,
+        debug: {
+          appIdLength: PRIVY_APP_ID?.length,
+          appIdStart: PRIVY_APP_ID?.substring(0, 8),
+          secretLength: PRIVY_APP_SECRET?.length
+        }
       })
     };
     
