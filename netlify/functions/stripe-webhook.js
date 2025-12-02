@@ -53,14 +53,39 @@ exports.handler = async (event) => {
     const subscription = stripeEvent.data.object;
     const metadata = subscription.metadata || {};
     
-    const subscriberWallet = metadata.wallet || metadata.wallet_address || '';
+    const subscriberWallet = metadata.wallet_address || '';
     const subscriberUsername = metadata.username || '';
     const subscriberEmail = subscription.customer_email || metadata.email || '';
-    const subscriberPrivyId = metadata.privy_id || '';
+    const subscriberPrivyId = metadata.privy_user_id || '';
+    const subscriberUserId = metadata.user_id || '';
     
-    // Determine tier from price/product or metadata
-    let tier = (metadata.tier || metadata.plan || 'standard').toLowerCase();
-    if (!STAR_BONUSES[tier]) tier = 'standard';
+    // Determine tier from product name
+    let tier = 'standard';
+    
+    // Try to get product name from subscription items
+    const items = subscription.items?.data || [];
+    if (items.length > 0) {
+      const productName = (items[0].price?.product?.name || items[0].plan?.nickname || '').toLowerCase();
+      if (productName.includes('pro')) {
+        tier = 'pro';
+      } else if (productName.includes('standard')) {
+        tier = 'standard';
+      }
+    }
+    
+    // Also check if product name is directly on the object (checkout sessions)
+    const productNameDirect = (subscription.display_items?.[0]?.custom?.name || 
+                              subscription.line_items?.data?.[0]?.description || '').toLowerCase();
+    if (productNameDirect.includes('pro')) {
+      tier = 'pro';
+    } else if (productNameDirect.includes('standard')) {
+      tier = 'standard';
+    }
+    
+    // Fallback to metadata if set
+    if (metadata.tier) {
+      tier = metadata.tier.toLowerCase();
+    }
 
     if (!subscriberWallet) {
       console.log('No wallet in metadata, skipping');
