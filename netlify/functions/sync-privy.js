@@ -90,6 +90,7 @@ exports.handler = async (event) => {
     
     // Sync to Privy in batches
     let successCount = 0;
+    let lastError = null;
     const BATCH_SIZE = 15;
     
     for (let i = 0; i < walletsToSync.length; i += BATCH_SIZE) {
@@ -103,6 +104,8 @@ exports.handler = async (event) => {
           await markAsSynced(accessToken, rowNum);
         }
         successCount += batch.length;
+      } else {
+        lastError = result;
       }
       
       if (i + BATCH_SIZE < walletsToSync.length) {
@@ -114,9 +117,10 @@ exports.handler = async (event) => {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        success: true,
+        success: successCount > 0,
         synced: successCount,
-        total: walletsToSync.length
+        total: walletsToSync.length,
+        privyError: lastError
       })
     };
     
@@ -184,5 +188,19 @@ async function addToPrivy(wallets) {
     },
     body: JSON.stringify(wallets.map(w => ({ type: 'wallet', value: w })))
   });
-  return { success: response.ok };
+  
+  // Treat as success if: 200/201 OR if already exists (400/409)
+  if (response.ok) {
+    return { success: true };
+  }
+  
+  const errorText = await response.text();
+  
+  // If wallets already exist, that's fine - treat as success
+  if (errorText.includes('already') || response.status === 409) {
+    return { success: true, alreadyExists: true };
+  }
+  
+  console.log('Privy error:', response.status, errorText);
+  return { success: false, status: response.status, error: errorText };
 }
