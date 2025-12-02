@@ -16,7 +16,6 @@ try {
 const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID;
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
-// Star bonus amounts
 const STAR_BONUSES = {
   'standard': 40000,
   'pro': 80000
@@ -33,7 +32,6 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Verify Stripe signature (skip if no signature header - for testing)
     const sig = event.headers['stripe-signature'];
     const body = event.body;
     
@@ -43,34 +41,32 @@ exports.handler = async (event) => {
 
     const stripeEvent = JSON.parse(body);
 
-    // Only process successful subscription events
     if (stripeEvent.type !== 'customer.subscription.created' && 
         stripeEvent.type !== 'checkout.session.completed') {
-      return { statusCode: 200, headers, body: JSON.stringify({ received: true, skipped: true }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ received: true, skipped: 'wrong_event' }) };
     }
 
-    // For checkout sessions, only process subscription mode (not one-off payments)
     const subscription = stripeEvent.data.object;
+    
     if (stripeEvent.type === 'checkout.session.completed') {
       if (subscription.mode !== 'subscription') {
         return { statusCode: 200, headers, body: JSON.stringify({ received: true, skipped: 'not_subscription' }) };
       }
     }
 
-    // Extract subscription data
-    const subscription = stripeEvent.data.object;
     const metadata = subscription.metadata || {};
     
     const subscriberWallet = metadata.wallet_address || '';
     const subscriberUsername = metadata.username || '';
     const subscriberEmail = subscription.customer_email || metadata.email || '';
-    const subscriberPrivyId = metadata.privy_user_id || '';
-    const subscriberUserId = metadata.user_id || '';
-    
+
+    if (!subscriberWallet) {
+      return { statusCode: 200, headers, body: JSON.stringify({ received: true, skipped: 'no_wallet' }) };
+    }
+
     // Determine tier from product name
     let tier = 'standard';
     
-    // Try to get product name from subscription items
     const items = subscription.items?.data || [];
     if (items.length > 0) {
       const productName = (items[0].price?.product?.name || items[0].plan?.nickname || '').toLowerCase();
@@ -81,7 +77,6 @@ exports.handler = async (event) => {
       }
     }
     
-    // Also check if product name is directly on the object (checkout sessions)
     const productNameDirect = (subscription.display_items?.[0]?.custom?.name || 
                               subscription.line_items?.data?.[0]?.description || '').toLowerCase();
     if (productNameDirect.includes('pro')) {
@@ -90,53 +85,33 @@ exports.handler = async (event) => {
       tier = 'standard';
     }
     
-    // Fallback to metadata if set
     if (metadata.tier) {
       tier = metadata.tier.toLowerCase();
     }
 
-    if (!subscriberWallet) {
-      console.log('No wallet in metadata, skipping');
-      return { statusCode: 200, headers, body: JSON.stringify({ received: true, skipped: 'no_wallet' }) };
-    }
-
-    // Get Google token
     const accessToken = await getGoogleToken();
 
-    // Look up inviter from ClaimedInvites
     const inviterData = await findInviter(accessToken, subscriberWallet);
 
-    // Only track if this subscriber was invited by someone
     if (!inviterData.wallet) {
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify({ 
-          received: true, 
-          skipped: 'not_invited',
-          subscriber: subscriberWallet
-        })
+        body: JSON.stringify({ received: true, skipped: 'not_invited', subscriber: subscriberWallet })
       };
     }
 
-    // Check if this wallet already claimed a bonus
     const alreadyClaimed = await checkAlreadyClaimed(accessToken, subscriberWallet);
     if (alreadyClaimed) {
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify({ 
-          received: true, 
-          skipped: 'already_claimed',
-          subscriber: subscriberWallet
-        })
+        body: JSON.stringify({ received: true, skipped: 'already_claimed', subscriber: subscriberWallet })
       };
     }
 
-    // Calculate star bonus
     const starsBonus = STAR_BONUSES[tier];
 
-    // Write to Conversions sheet
     const conversionRow = [
       subscriberWallet,
       subscriberUsername,
@@ -167,16 +142,15 @@ exports.handler = async (event) => {
   } catch (error) {
     console.error('Webhook error:', error);
     return {
-      statusCode: 200, // Return 200 so Stripe doesn't retry
+      statusCode: 200,
       headers,
       body: JSON.stringify({ error: error.message })
     };
   }
 };
 
-// Verify Stripe webhook signature
 function verifyStripeSignature(payload, sig, secret) {
-  if (!secret) return true; // Skip verification if no secret set (for testing)
+  if (!secret) return true;
   
   try {
     const elements = sig.split(',');
@@ -195,7 +169,6 @@ function verifyStripeSignature(payload, sig, secret) {
   }
 }
 
-// Check if wallet already has a conversion recorded
 async function checkAlreadyClaimed(accessToken, wallet) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Conversions!A:A`;
   const response = await fetch(url, {
@@ -216,7 +189,6 @@ async function checkAlreadyClaimed(accessToken, wallet) {
   return false;
 }
 
-// Find who invited this wallet
 async function findInviter(accessToken, subscriberWallet) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ClaimedInvites!A:B`;
   const response = await fetch(url, {
@@ -230,17 +202,13 @@ async function findInviter(accessToken, subscriberWallet) {
   
   for (let i = 1; i < rows.length; i++) {
     if (rows[i][0]?.toLowerCase() === subscriberWallet.toLowerCase()) {
-      return { 
-        wallet: rows[i][1] || '',
-        username: '' // We don't have inviter username in ClaimedInvites currently
-      };
+      return { wallet: rows[i][1] || '', username: '' };
     }
   }
   
   return { wallet: '', username: '' };
 }
 
-// Append row to sheet
 async function appendToSheet(accessToken, sheetName, rowData) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${sheetName}!A:J:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
   await fetch(url, {
@@ -253,7 +221,6 @@ async function appendToSheet(accessToken, sheetName, rowData) {
   });
 }
 
-// Google auth
 async function getGoogleToken() {
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: 'RS256', typ: 'JWT' };
