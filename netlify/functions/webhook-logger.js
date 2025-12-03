@@ -13,7 +13,7 @@ exports.handler = async (event) => {
   console.log('Body:', event.body);
   console.log('=== END WEBHOOK ===');
 
-  // Return 200 so the webhook doesn't retry
+  // Return 200 so webhook is accepted
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
