@@ -3,9 +3,13 @@
   publish = "."
 
 [functions]
-  [functions.sync-privy]
-    schedule = "*/15 * * * *"
+  node_bundler = "esbuild"
 
+# Scheduled function - runs every 1 minute
+[functions."sync-privy"]
+  schedule = "* * * * *"
+
+# Redirects for clean URLs
 [[redirects]]
   from = "/ref/*"
   to = "/index.html"
