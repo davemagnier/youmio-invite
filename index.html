@@ -29,220 +29,72 @@
       flex-direction: column; 
     }
     
-    /* Floating glow effects */
-    .glow { 
-      position: fixed; 
-      width: 300px; 
-      height: 300px; 
-      border-radius: 50%; 
-      filter: blur(80px); 
-      pointer-events: none; 
-      z-index: 0; 
-    }
+    .glow { position: fixed; width: 300px; height: 300px; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
     .glow-1 { top: 20%; left: 20%; background: rgba(236,72,153,0.15); }
     .glow-2 { bottom: 20%; right: 20%; background: rgba(168,85,247,0.15); }
     
-    /* Page container */
-    .page-container { 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      position: relative; 
-      z-index: 1; 
-    }
+    .page-container { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; }
     
-    /* Logo header - uses youmio-logo.png from repo */
-    .logo-header { 
-      text-align: center; 
-      margin-bottom: 24px; 
-    }
-    .logo-img { 
-      height: 120px; 
-      width: auto; 
-      filter: drop-shadow(0 4px 20px rgba(196, 165, 217, 0.3));
-    }
+    .logo-header { text-align: center; margin-bottom: 24px; }
+    .logo-img { height: 120px; width: auto; filter: drop-shadow(0 4px 20px rgba(196, 165, 217, 0.3)); }
     
-    /* Season text with gradient */
-    .season-text { 
-      font-size: 26px; 
-      font-weight: 600; 
-      background: linear-gradient(135deg, #c084fc 0%, #ec4899 50%, #f97316 100%); 
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent; 
-      background-clip: text; 
-      letter-spacing: 0.05em; 
-      text-align: center; 
-      margin-top: 24px; 
-    }
+    .season-text { font-size: 26px; font-weight: 600; background: linear-gradient(135deg, #c084fc 0%, #ec4899 50%, #f97316 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 0.05em; text-align: center; margin-top: 24px; }
     
-    /* Main card */
-    .card { 
-      position: relative; 
-      z-index: 1; 
-      width: 100%; 
-      max-width: 420px; 
-      background: rgba(22,22,31,0.95); 
-      border: 1px solid rgba(255,255,255,0.1); 
-      border-radius: 16px; 
-      padding: 28px; 
-    }
+    .card { position: relative; z-index: 1; width: 100%; max-width: 420px; background: rgba(22,22,31,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; }
     
-    /* Header section */
-    .header { 
-      display: flex; 
-      align-items: center; 
-      gap: 12px; 
-      margin-bottom: 20px; 
-    }
-    .icon { 
-      width: 44px; 
-      height: 44px; 
-      background: linear-gradient(135deg, #ec4899, #9333ea); 
-      border-radius: 12px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      flex-shrink: 0; 
-    }
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .icon { width: 44px; height: 44px; background: linear-gradient(135deg, #ec4899, #9333ea); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .title { color: white; font-size: 18px; font-weight: 600; }
     .subtitle { color: #9ca3af; font-size: 13px; margin-top: 2px; }
     .invite-count { color: #f9a8d4; }
     
-    /* Info boxes */
-    .inviter-box { 
-      padding: 14px; 
-      background: rgba(255,255,255,0.05); 
-      border-radius: 10px; 
-      border: 1px solid rgba(255,255,255,0.05); 
-      margin-bottom: 20px; 
-    }
+    .inviter-box { padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; }
     .inviter-label { color: #9ca3af; font-size: 13px; margin-bottom: 4px; }
     .inviter-addr { color: white; font-family: monospace; font-size: 15px; }
     
-    .info-box { 
-      padding: 14px; 
-      background: linear-gradient(to right, rgba(236,72,153,0.1), rgba(168,85,247,0.1)); 
-      border: 1px solid rgba(236,72,153,0.2); 
-      border-radius: 10px; 
-      margin-bottom: 20px; 
-    }
+    .info-box { padding: 14px; background: linear-gradient(to right, rgba(236,72,153,0.1), rgba(168,85,247,0.1)); border: 1px solid rgba(236,72,153,0.2); border-radius: 10px; margin-bottom: 20px; }
     .info-text { color: #d1d5db; font-size: 13px; line-height: 1.5; }
     
-    /* Form elements */
     .label { display: block; color: #9ca3af; font-size: 13px; margin-bottom: 8px; }
-    .input { 
-      width: 100%; 
-      background: rgba(255,255,255,0.05); 
-      border: 1px solid rgba(255,255,255,0.1); 
-      border-radius: 10px; 
-      padding: 12px 14px; 
-      color: white; 
-      font-size: 14px; 
-      font-family: monospace; 
-      outline: none; 
-      margin-bottom: 6px; 
-    }
+    .input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; color: white; font-size: 14px; font-family: monospace; outline: none; margin-bottom: 6px; }
     .input:focus { border-color: rgba(236,72,153,0.5); }
     .input::placeholder { color: #6b7280; }
     
     .error { color: #f87171; font-size: 13px; margin-bottom: 10px; display: none; }
     .error.show { display: block; }
     
-    /* Buttons */
-    .btn { 
-      width: 100%; 
-      padding: 14px; 
-      background: linear-gradient(to right, #ec4899, #db2777); 
-      border: none; 
-      color: white; 
-      font-weight: 600; 
-      font-size: 15px; 
-      border-radius: 10px; 
-      cursor: pointer; 
-      transition: all 0.2s; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      gap: 8px; 
-    }
+    .btn { width: 100%; padding: 14px; background: linear-gradient(to right, #ec4899, #db2777); border: none; color: white; font-weight: 600; font-size: 15px; border-radius: 10px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn:hover { filter: brightness(1.1); }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-secondary { 
-      background: rgba(255,255,255,0.1); 
-      border: 1px solid rgba(255,255,255,0.1); 
-    }
+    .btn-secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); }
     .btn-secondary:hover { background: rgba(255,255,255,0.15); filter: none; }
     .btn-wallet { background: linear-gradient(135deg, #8b5cf6, #6366f1); }
     
-    /* Link display */
-    .link-box { 
-      background: rgba(255,255,255,0.05); 
-      border: 1px solid rgba(255,255,255,0.1); 
-      border-radius: 10px; 
-      padding: 14px; 
-      margin-bottom: 16px; 
-    }
-    .link-text { 
-      color: white; 
-      font-family: monospace; 
-      font-size: 12px; 
-      word-break: break-all; 
-      margin-bottom: 12px; 
-    }
+    .link-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 14px; margin-bottom: 16px; }
+    .link-text { color: white; font-family: monospace; font-size: 12px; word-break: break-all; margin-bottom: 12px; }
     .link-actions { display: flex; gap: 8px; }
-    .link-btn { 
-      flex: 1; 
-      padding: 10px; 
-      border-radius: 8px; 
-      font-weight: 500; 
-      font-size: 13px; 
-      cursor: pointer; 
-      transition: all 0.2s; 
-      text-align: center; 
-      border: none; 
-    }
+    .link-btn { flex: 1; padding: 10px; border-radius: 8px; font-weight: 500; font-size: 13px; cursor: pointer; transition: all 0.2s; text-align: center; border: none; }
     .link-btn-copy { background: rgba(255,255,255,0.1); color: white; }
     .link-btn-copy:hover { background: rgba(255,255,255,0.2); }
     .link-btn-copy.copied { background: rgba(34,197,94,0.2); color: #4ade80; }
     .link-btn-twitter { background: rgba(29,161,242,0.15); color: #1DA1F2; }
     .link-btn-twitter:hover { background: rgba(29,161,242,0.25); }
     
-    /* Success states */
-    .success-icon { 
-      width: 64px; 
-      height: 64px; 
-      background: linear-gradient(135deg, #4ade80, #16a34a); 
-      border-radius: 50%; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      margin: 0 auto 16px; 
-    }
+    .success-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #4ade80, #16a34a); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
     .success-title { color: white; font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 8px; }
     .success-text { color: #9ca3af; font-size: 14px; text-align: center; margin-bottom: 20px; line-height: 1.5; }
     .wallet-box { padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 20px; }
     
-    /* Status icons */
-    .status-icon { 
-      width: 64px; 
-      height: 64px; 
-      border-radius: 50%; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      margin: 0 auto 16px; 
-      font-size: 32px; 
-    }
+    .status-icon { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; }
     .status-icon.warning { background: rgba(234,179,8,0.2); }
     .status-icon.error { background: rgba(239,68,68,0.2); }
+    .status-icon.locked { background: rgba(168,85,247,0.2); }
     
-    /* Verify section */
     .verify-section { text-align: center; padding: 20px 0; }
     .verify-icon { font-size: 48px; margin-bottom: 16px; }
     .verify-title { color: white; font-size: 16px; font-weight: 600; margin-bottom: 8px; }
     .verify-text { color: #9ca3af; font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
     
-    /* Loading */
     .spinner { animation: spin 1s linear infinite; display: inline-block; }
     @keyframes spin { to { transform: rotate(360deg); } }
     
@@ -250,102 +102,25 @@
     .view.active { display: block; }
     
     .loading-view { text-align: center; padding: 40px 20px; }
-    .loading-spinner { 
-      width: 40px; 
-      height: 40px; 
-      border: 3px solid rgba(236,72,153,0.3); 
-      border-top-color: #ec4899; 
-      border-radius: 50%; 
-      animation: spin 1s linear infinite; 
-      margin: 0 auto 16px; 
-    }
+    .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(236,72,153,0.3); border-top-color: #ec4899; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
     .loading-text { color: #9ca3af; font-size: 14px; }
     .no-invites-text { color: #9ca3af; font-size: 14px; text-align: center; padding: 20px 0; }
 
-    /* Generated codes list */
-    .codes-list { 
-      display: flex; 
-      flex-direction: column; 
-      gap: 10px; 
-      margin-bottom: 16px; 
-      max-height: 280px; 
-      overflow-y: auto; 
-    }
-    .code-row { 
-      display: flex; 
-      align-items: center; 
-      gap: 8px; 
-      background: rgba(255,255,255,0.05); 
-      border: 1px solid rgba(255,255,255,0.08); 
-      border-radius: 10px; 
-      padding: 12px; 
-    }
+    .codes-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; max-height: 280px; overflow-y: auto; }
+    .code-row { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px; }
     .code-number { font-size: 12px; font-weight: 600; color: #ec4899; min-width: 24px; }
-    .code-link { 
-      flex: 1; 
-      font-size: 11px; 
-      font-family: monospace; 
-      color: rgba(255,255,255,0.8); 
-      word-break: break-all; 
-      line-height: 1.4; 
-    }
-    .btn-copy-small { 
-      background: rgba(255,255,255,0.1); 
-      border: 1px solid rgba(255,255,255,0.1); 
-      border-radius: 6px; 
-      padding: 6px 10px; 
-      color: white; 
-      cursor: pointer; 
-      font-size: 13px; 
-      transition: all 0.2s; 
-    }
+    .code-link { flex: 1; font-size: 11px; font-family: monospace; color: rgba(255,255,255,0.8); word-break: break-all; line-height: 1.4; }
+    .btn-copy-small { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; color: white; cursor: pointer; font-size: 13px; transition: all 0.2s; }
     .btn-copy-small:hover { background: rgba(255,255,255,0.2); }
     .btn-copy-small.copied { background: rgba(34,197,94,0.2); color: #4ade80; }
-    .btn-twitter-small { 
-      background: rgba(29,161,242,0.15); 
-      border: 1px solid rgba(29,161,242,0.2); 
-      border-radius: 6px; 
-      padding: 6px 10px; 
-      color: #1DA1F2; 
-      cursor: pointer; 
-      font-size: 13px; 
-      transition: all 0.2s; 
-    }
+    .btn-twitter-small { background: rgba(29,161,242,0.15); border: 1px solid rgba(29,161,242,0.2); border-radius: 6px; padding: 6px 10px; color: #1DA1F2; cursor: pointer; font-size: 13px; transition: all 0.2s; }
     .btn-twitter-small:hover { background: rgba(29,161,242,0.25); }
 
-    /* Wallet Modal */
-    .modal-overlay { 
-      position: fixed; 
-      top: 0; left: 0; right: 0; bottom: 0; 
-      background: rgba(0,0,0,0.8); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      z-index: 1000; 
-      padding: 20px; 
-    }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
     .modal-overlay.hidden { display: none; }
-    .modal { 
-      background: rgba(22,22,31,0.98); 
-      border: 1px solid rgba(255,255,255,0.1); 
-      border-radius: 16px; 
-      padding: 24px; 
-      max-width: 380px; 
-      width: 100%; 
-    }
+    .modal { background: rgba(22,22,31,0.98); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; max-width: 380px; width: 100%; }
     .modal-title { color: white; font-size: 18px; font-weight: 600; text-align: center; margin-bottom: 20px; }
-    .wallet-option { 
-      display: flex; 
-      align-items: center; 
-      gap: 14px; 
-      padding: 14px 16px; 
-      background: rgba(255,255,255,0.05); 
-      border: 1px solid rgba(255,255,255,0.08); 
-      border-radius: 12px; 
-      cursor: pointer; 
-      transition: all 0.2s; 
-      margin-bottom: 10px; 
-    }
+    .wallet-option { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; cursor: pointer; transition: all 0.2s; margin-bottom: 10px; }
     .wallet-option:hover { background: rgba(255,255,255,0.1); border-color: #ec4899; }
     .wallet-option.disabled { opacity: 0.4; cursor: not-allowed; }
     .wallet-option.disabled:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.08); }
@@ -354,17 +129,7 @@
     .wallet-option-name { color: white; font-weight: 600; font-size: 15px; }
     .wallet-option-desc { font-size: 12px; color: #9ca3af; }
     .wallet-option-desc.available { color: #4ade80; }
-    .modal-close { 
-      width: 100%; 
-      padding: 12px; 
-      margin-top: 10px; 
-      background: transparent; 
-      border: 1px solid rgba(255,255,255,0.15); 
-      border-radius: 10px; 
-      color: #9ca3af; 
-      font-size: 14px; 
-      cursor: pointer; 
-    }
+    .modal-close { width: 100%; padding: 12px; margin-top: 10px; background: transparent; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #9ca3af; font-size: 14px; cursor: pointer; }
     .modal-close:hover { background: rgba(255,255,255,0.05); }
     .mobile-note { font-size: 12px; color: #6b7280; text-align: center; margin-top: 16px; line-height: 1.5; }
 
@@ -380,7 +145,6 @@
   <div class="glow glow-2"></div>
 
   <div class="page-container">
-    <!-- Logo using youmio-logo.png from repo -->
     <div class="logo-header">
       <img src="/youmio-logo.png" alt="Youmio" class="logo-img" onerror="this.src='/logo.png';">
     </div>
@@ -392,6 +156,18 @@
           <div class="loading-spinner"></div>
           <p class="loading-text">Loading...</p>
         </div>
+      </div>
+
+      <!-- NOT ON LIST View (NEW) -->
+      <div id="view-not-on-list" class="view" style="text-align: center;">
+        <div class="status-icon locked">🔒</div>
+        <div class="success-title">Not on the Invite List</div>
+        <p class="success-text">Your wallet address is not on the list of addresses granted invites for Season 1.</p>
+        <div class="inviter-box" style="margin-bottom: 20px;">
+          <div class="inviter-label">Wallet checked</div>
+          <div class="inviter-addr" id="not-on-list-wallet"></div>
+        </div>
+        <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio</a>
       </div>
 
       <!-- Verify Wallet View -->
@@ -506,11 +282,11 @@
         <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
       </div>
 
-      <!-- Invalid View -->
+      <!-- Invalid View (for bad claim codes only) -->
       <div id="view-invalid" class="view" style="text-align: center;">
         <div class="status-icon error">❌</div>
-        <div class="success-title">Invalid Invite</div>
-        <p class="success-text">This invite link is not valid. Please check the link or request a new one.</p>
+        <div class="success-title">Invalid Invite Code</div>
+        <p class="success-text">This invite code is not valid. Please check the link or request a new one from your friend.</p>
         <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
       </div>
 
@@ -548,7 +324,7 @@
       </div>
 
       <div class="wallet-option" id="select-phantom">
-        <img src="https://phantom.com/img/phantom_logo_512.png" alt="Phantom" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%235346b4%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-weight=%22bold%22>P</text></svg>'">
+        <img src="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%235346b4%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-weight=%22bold%22>P</text></svg>" alt="Phantom">
         <div class="wallet-option-info">
           <div class="wallet-option-name">Phantom</div>
           <div class="wallet-option-desc" id="phantom-status">Detecting...</div>
@@ -556,7 +332,7 @@
       </div>
 
       <div class="wallet-option" id="select-rabby">
-        <img src="https://rabby.io/assets/images/logo-rabby.svg" alt="Rabby" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%238697FF%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-weight=%22bold%22>R</text></svg>'">
+        <img src="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%238697FF%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-weight=%22bold%22>R</text></svg>" alt="Rabby">
         <div class="wallet-option-info">
           <div class="wallet-option-name">Rabby Wallet</div>
           <div class="wallet-option-desc" id="rabby-status">Detecting...</div>
@@ -564,7 +340,7 @@
       </div>
 
       <div class="wallet-option" id="select-injected" style="display: none;">
-        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Browser Wallet">
+        <img src="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%23666%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-weight=%22bold%22>W</text></svg>" alt="Browser Wallet">
         <div class="wallet-option-info">
           <div class="wallet-option-name">Other Wallet</div>
           <div class="wallet-option-desc">Use browser extension</div>
@@ -583,6 +359,7 @@
     var walletSignature = '';
     var signedMessage = '';
     var generatedCodes = [];
+    var allowZeroInvites = false; // Flag for users with 0 invites but existing codes
 
     // Wallet providers
     var wallets = {
@@ -668,10 +445,13 @@
 
         walletSignature = signature;
         signedMessage = message;
+        
+        // Load any existing codes for this wallet
         await loadExistingCodes();
 
-        document.getElementById('invite-count').textContent = invitesRemaining + '/5 Invites Remaining';
+        document.getElementById('invite-count').textContent = invitesRemaining + (invitesRemaining === 1 ? ' Invite Remaining' : ' Invites Remaining');
         
+        // Show/hide generate button based on remaining invites
         if (invitesRemaining <= 0) {
           document.getElementById('no-invites').style.display = 'block';
           document.getElementById('generate-section').style.display = 'none';
@@ -679,6 +459,7 @@
           document.getElementById('no-invites').style.display = 'none';
           document.getElementById('generate-section').style.display = 'block';
         }
+        
         showView('share');
       } catch (err) {
         console.error('Wallet connection error:', err);
@@ -704,7 +485,7 @@
     }
 
     function showView(viewName) {
-      var views = ['loading', 'verify', 'share', 'claim', 'success', 'used', 'invalid', 'error'];
+      var views = ['loading', 'verify', 'share', 'claim', 'success', 'used', 'invalid', 'error', 'not-on-list'];
       views.forEach(function(v) {
         var el = document.getElementById('view-' + v);
         if (el) el.classList.remove('active');
@@ -715,20 +496,36 @@
 
     async function init() {
       var page = getPageType();
+      
       if (page.type === 'share') {
         inviterWallet = page.wallet;
         document.getElementById('verify-wallet-display').textContent = inviterWallet.slice(0, 6) + '...' + inviterWallet.slice(-4);
+        document.getElementById('not-on-list-wallet').textContent = inviterWallet.slice(0, 6) + '...' + inviterWallet.slice(-4);
+        
         detectWallets();
+        
         try {
           var response = await fetch('/.netlify/functions/check-invite?inviter=' + inviterWallet);
           var data = await response.json();
+          
           if (data.valid) {
+            // Wallet is on allowlist with invites remaining
             invitesRemaining = data.invitesRemaining;
             showView('verify');
+          } else if (data.reason === 'no_invites') {
+            // Wallet is on allowlist but has 0 invites - still let them verify to see existing codes
+            invitesRemaining = 0;
+            allowZeroInvites = true;
+            showView('verify');
+          } else if (data.reason === 'not_allowlisted') {
+            // Wallet is NOT on the allowlist at all
+            showView('not-on-list');
           } else {
-            showView('invalid');
+            // Unknown error
+            showView('not-on-list');
           }
         } catch (err) {
+          console.error('Error checking invite:', err);
           showView('error');
         }
       } else if (page.type === 'claim') {
@@ -743,10 +540,12 @@
       try {
         var response = await fetch('/.netlify/functions/get-codes?inviter=' + inviterWallet);
         var data = await response.json();
+        
         if (data.success && data.codes && data.codes.length > 0) {
           generatedCodes = data.codes;
           displayGeneratedCodes();
           document.getElementById('generated-links-section').style.display = 'block';
+          
           if (generatedCodes.length > 1) {
             document.getElementById('copy-all-container').style.display = 'block';
           }
@@ -809,11 +608,12 @@
           invitesRemaining = data.invitesRemaining;
           displayGeneratedCodes();
           document.getElementById('generated-links-section').style.display = 'block';
-          document.getElementById('invite-count').textContent = invitesRemaining + '/5 Invites Remaining';
+          document.getElementById('invite-count').textContent = invitesRemaining + (invitesRemaining === 1 ? ' Invite Remaining' : ' Invites Remaining');
           if (generatedCodes.length > 1) {
             document.getElementById('copy-all-container').style.display = 'block';
           }
           if (invitesRemaining <= 0) {
+            document.getElementById('no-invites').style.display = 'block';
             document.getElementById('generate-section').style.display = 'none';
           }
         } else if (data.error === 'Signature expired, please sign again') {
