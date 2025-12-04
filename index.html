@@ -4,140 +4,446 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Youmio Season 1 Invite</title>
-  <meta name="description" content="You've been invited to Youmio Season 1. Claim your access now.">
-  <meta property="og:title" content="You're Invited to Youmio Season 1">
-  <meta property="og:description" content="Claim your spot and start earning Affinity.">
-  <meta property="og:image" content="https://youmioinvite.netlify.app/twitter-card.png">
-  <meta property="og:url" content="https://youmioinvite.netlify.app">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="You're Invited to Youmio Season 1">
-  <meta name="twitter:description" content="Claim your spot and start earning Affinity before it's too late.">
-  <meta name="twitter:image" content="https://youmioinvite.netlify.app/twitter-card.png">
-  <link rel="icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: #0a0a0f; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; flex-direction: column; }
-    .glow { position: fixed; width: 300px; height: 300px; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
-    .glow-1 { top: 20%; left: 20%; background: rgba(236,72,153,0.15); }
-    .glow-2 { bottom: 20%; right: 20%; background: rgba(168,85,247,0.15); }
-    .page-container { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; }
-    .logo-header { text-align: center; margin-bottom: 24px; }
-    .logo-img { height: 120px; width: auto; }
-    .fallback-logo { justify-content: center; }
-    .fallback-logo svg { width: 120px; height: auto; }
-    .season-text { font-size: 26px; font-weight: 600; background: linear-gradient(135deg, #c084fc 0%, #ec4899 50%, #f97316 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 0.05em; text-align: center; margin-top: 24px; }
-    .card { position: relative; z-index: 1; width: 100%; max-width: 420px; background: rgba(22,22,31,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; }
-    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-    .icon { width: 44px; height: 44px; background: linear-gradient(135deg, #ec4899, #9333ea); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .title { color: white; font-size: 18px; font-weight: 600; }
-    .subtitle { color: #9ca3af; font-size: 13px; margin-top: 2px; }
-    .invite-count { color: #f9a8d4; }
-    .inviter-box { padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; }
-    .inviter-label { color: #9ca3af; font-size: 13px; margin-bottom: 4px; }
-    .inviter-addr { color: white; font-family: monospace; font-size: 15px; }
-    .info-box { padding: 14px; background: linear-gradient(to right, rgba(236,72,153,0.1), rgba(168,85,247,0.1)); border: 1px solid rgba(236,72,153,0.2); border-radius: 10px; margin-bottom: 20px; }
-    .info-text { color: #d1d5db; font-size: 13px; line-height: 1.5; }
-    .label { display: block; color: #9ca3af; font-size: 13px; margin-bottom: 8px; }
-    .input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; color: white; font-size: 14px; font-family: monospace; outline: none; margin-bottom: 6px; }
-    .input:focus { border-color: rgba(236,72,153,0.5); }
-    .input::placeholder { color: #6b7280; }
-    .error { color: #f87171; font-size: 13px; margin-bottom: 10px; display: none; }
-    .error.show { display: block; }
-    .btn { width: 100%; padding: 14px; background: linear-gradient(to right, #ec4899, #db2777); border: none; color: white; font-weight: 600; font-size: 15px; border-radius: 10px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .btn:hover { filter: brightness(1.1); }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); }
-    .btn-secondary:hover { background: rgba(255,255,255,0.15); filter: none; }
-    .btn-wallet { background: linear-gradient(135deg, #8b5cf6, #6366f1); }
-    .link-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 14px; margin-bottom: 16px; }
-    .link-text { color: white; font-family: monospace; font-size: 12px; word-break: break-all; margin-bottom: 12px; }
-    .link-actions { display: flex; gap: 8px; }
-    .link-btn { flex: 1; padding: 10px; border-radius: 8px; font-weight: 500; font-size: 13px; cursor: pointer; transition: all 0.2s; text-align: center; border: none; }
-    .link-btn-copy { background: rgba(255,255,255,0.1); color: white; }
-    .link-btn-copy:hover { background: rgba(255,255,255,0.2); }
-    .link-btn-copy.copied { background: rgba(34,197,94,0.2); color: #4ade80; }
-    .link-btn-twitter { background: rgba(29,161,242,0.15); color: #1DA1F2; }
-    .link-btn-twitter:hover { background: rgba(29,161,242,0.25); }
-    .success-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #4ade80, #16a34a); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-    .success-title { color: white; font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 8px; }
-    .success-text { color: #9ca3af; font-size: 14px; text-align: center; margin-bottom: 20px; line-height: 1.5; }
-    .wallet-box { padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 20px; }
-    .status-icon { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; }
-    .status-icon.warning { background: rgba(234,179,8,0.2); }
-    .status-icon.error { background: rgba(239,68,68,0.2); }
-    .verify-section { text-align: center; padding: 20px 0; }
-    .verify-icon { font-size: 48px; margin-bottom: 16px; }
-    .verify-title { color: white; font-size: 16px; font-weight: 600; margin-bottom: 8px; }
-    .verify-text { color: #9ca3af; font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
-    .spinner { animation: spin 1s linear infinite; display: inline-block; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #fff;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .logo svg {
+      height: 40px;
+      margin-bottom: 8px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 28px;
+      backdrop-filter: blur(10px);
+    }
+
     .view { display: none; }
     .view.active { display: block; }
-    .loading-view { text-align: center; padding: 40px 20px; }
-    .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(236,72,153,0.3); border-top-color: #ec4899; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
-    .loading-text { color: #9ca3af; font-size: 14px; }
-    .no-invites-text { color: #9ca3af; font-size: 14px; text-align: center; padding: 20px 0; }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #ec4899, #a855f7);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 2px;
+    }
+
+    .invite-count {
+      color: #4ade80;
+      font-weight: 500;
+    }
+
+    .verify-section {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .verify-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .verify-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .verify-text {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .inviter-box, .wallet-box {
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 20px;
+    }
+
+    .inviter-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .inviter-addr {
+      font-size: 14px;
+      font-family: monospace;
+      color: #fff;
+      word-break: break-all;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-wallet {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+    }
+
+    .btn-wallet:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ec4899, #a855f7);
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .mobile-note {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+
+    .error {
+      color: #f87171;
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .error.show { display: block; }
+
+    .info-box {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 20px;
+    }
+
+    .info-text {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.5;
+    }
+
+    .codes-list {
+      margin: 20px 0;
+    }
+
+    .code-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .code-link {
+      flex: 1;
+      font-size: 12px;
+      font-family: monospace;
+      color: #4ade80;
+      word-break: break-all;
+    }
+
+    .code-copy {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: white;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .code-copy:hover { background: rgba(255,255,255,0.2); }
+    .code-copy.copied { background: #4ade80; color: #000; }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .btn-row .btn { flex: 1; }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 8px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: white;
+      font-size: 15px;
+      font-family: monospace;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: rgba(168, 85, 247, 0.5);
+    }
+
+    .input-group input::placeholder {
+      color: rgba(255,255,255,0.3);
+    }
+
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .success-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .success-text {
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .status-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .status-icon.warning { color: #fbbf24; }
+    .status-icon.error { color: #f87171; }
+
+    .loading-view {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: #a855f7;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: rgba(255,255,255,0.5);
+      font-size: 14px;
+    }
+
+    .season-text {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
 
     /* Wallet Modal */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
-    .modal-overlay.hidden { display: none; }
-    .modal { background: rgba(22,22,31,0.98); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; max-width: 380px; width: 100%; }
-    .modal-title { color: white; font-size: 18px; font-weight: 600; text-align: center; margin-bottom: 20px; }
-    .wallet-option { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; cursor: pointer; transition: all 0.2s; margin-bottom: 10px; }
-    .wallet-option:hover { background: rgba(255,255,255,0.1); border-color: #ec4899; }
-    .wallet-option.disabled { opacity: 0.4; cursor: not-allowed; }
-    .wallet-option.disabled:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.08); }
-    .wallet-option img { width: 40px; height: 40px; border-radius: 10px; }
-    .wallet-option-info { flex: 1; }
-    .wallet-option-name { color: white; font-weight: 600; font-size: 15px; }
-    .wallet-option-desc { font-size: 12px; color: #9ca3af; }
-    .wallet-option-desc.available { color: #4ade80; }
-    .modal-close { width: 100%; padding: 12px; margin-top: 10px; background: transparent; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #9ca3af; font-size: 14px; cursor: pointer; }
-    .modal-close:hover { background: rgba(255,255,255,0.05); }
-    .mobile-note { font-size: 12px; color: #6b7280; text-align: center; margin-top: 16px; line-height: 1.5; }
-
-    /* Generated codes list */
-    .codes-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; max-height: 280px; overflow-y: auto; }
-    .code-row { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px; }
-    .code-number { font-size: 12px; font-weight: 600; color: #ec4899; min-width: 24px; }
-    .code-link { flex: 1; font-size: 11px; font-family: monospace; color: rgba(255,255,255,0.8); word-break: break-all; line-height: 1.4; }
-    .btn-copy-small { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; color: white; cursor: pointer; font-size: 13px; transition: all 0.2s; }
-    .btn-copy-small:hover { background: rgba(255,255,255,0.2); }
-    .btn-copy-small.copied { background: rgba(34,197,94,0.2); color: #4ade80; }
-    .btn-twitter-small { background: rgba(29,161,242,0.15); border: 1px solid rgba(29,161,242,0.2); border-radius: 6px; padding: 6px 10px; color: #1DA1F2; cursor: pointer; font-size: 13px; transition: all 0.2s; }
-    .btn-twitter-small:hover { background: rgba(29,161,242,0.25); }
-
-    @media (max-width: 480px) {
-      .card { padding: 20px; }
-      .link-actions { flex-direction: column; }
-      .code-link { font-size: 10px; }
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
     }
+
+    .modal-overlay.hidden { display: none; }
+
+    .modal {
+      background: #1a1a2e;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .wallet-option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .wallet-option:hover:not(.disabled) {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .wallet-option img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+    }
+
+    .wallet-option-name { font-weight: 600; font-size: 15px; }
+    .wallet-option-desc { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+    .wallet-option.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .modal-close {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .modal-close:hover { background: rgba(255,255,255,0.05); }
   </style>
 </head>
 <body>
-  <div class="glow glow-1"></div>
-  <div class="glow glow-2"></div>
-
-  <div class="page-container">
-    <div class="logo-header">
-      <img src="/logo.png" alt="Youmio" class="logo-img" onerror="this.style.display='none'; document.getElementById('fallback-logo').style.display='flex';">
-      <div id="fallback-logo" class="fallback-logo" style="display: none;">
-        <svg width="60" height="52" viewBox="0 0 60 52" fill="none">
-          <path d="M30 0C16.2 0 5 10.8 5 24v28h10V24c0-8.4 6.6-15 15-15s15 6.6 15 15v28h10V24C55 10.8 43.8 0 30 0z" fill="url(#logo-gradient)"/>
-          <defs>
-            <linearGradient id="logo-gradient" x1="5" y1="0" x2="55" y2="52" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#c084fc"/>
-              <stop offset="50%" stop-color="#ec4899"/>
-              <stop offset="100%" stop-color="#f97316"/>
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
+  <div class="container">
+    <div class="logo">
+      <svg width="60" height="52" viewBox="0 0 60 52" fill="none">
+        <path d="M30 0C16.2 0 5 10.8 5 24v28h10V24c0-8.4 6.6-15 15-15s15 6.6 15 15v28h10V24C55 10.8 43.8 0 30 0z" fill="url(#logo-gradient)"/>
+        <defs>
+          <linearGradient id="logo-gradient" x1="5" y1="0" x2="55" y2="52" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#c084fc"/>
+            <stop offset="50%" stop-color="#ec4899"/>
+            <stop offset="100%" stop-color="#f97316"/>
+          </linearGradient>
+        </defs>
+      </svg>
     </div>
 
     <div class="card">
-      <!-- Loading State -->
+      <!-- Loading View -->
       <div id="view-loading" class="view active">
         <div class="loading-view">
           <div class="loading-spinner"></div>
@@ -161,7 +467,7 @@
           <div class="verify-icon">🔐</div>
           <div class="verify-title">Verify You Own This Wallet</div>
           <div class="verify-text">To generate invite links, please connect your wallet and sign a message to prove ownership.</div>
-          <div class="inviter-box" style="text-align: left; margin-bottom: 20px;">
+          <div class="inviter-box" style="text-align: left;">
             <div class="inviter-label">Wallet to verify</div>
             <div class="inviter-addr" id="verify-wallet-display"></div>
           </div>
@@ -170,7 +476,7 @@
             Connect Wallet & Sign
           </button>
           <p class="mobile-note">📱 On mobile? Open this link in your wallet app's browser</p>
-          <p id="verify-error" class="error" style="margin-top: 12px; text-align: center;"></p>
+          <p id="verify-error" class="error" style="text-align: center;"></p>
         </div>
       </div>
 
@@ -178,7 +484,7 @@
       <div id="view-share" class="view">
         <div class="header">
           <div class="icon">
-            <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M15 14c-2.67 0-8 1.33-8 4v2h16v-2c0-2.67-5.33-4-8-4zm0-2c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9 2V12H4v2H2v2h2v2h2v-2h2v-2H6z"/></svg>
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
           </div>
           <div>
             <div class="title">Invite a Friend to Season 1</div>
@@ -190,53 +496,48 @@
           <p class="info-text">Generate unique invite links for your friends. Each link can only be used once.</p>
         </div>
 
-        <div id="no-invites" style="display: none;">
-          <p class="no-invites-text">You've used all your invites. Thanks for spreading the word!</p>
+        <div id="no-invites-msg" style="display: none; text-align: center; padding: 20px 0;">
+          <p style="color: rgba(255,255,255,0.6);">You've used all your invites.</p>
         </div>
 
-        <div id="generate-section">
-          <button class="btn" id="generate-btn">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            Generate Invite Link
-          </button>
-          <p id="generate-error" class="error" style="margin-top: 12px; text-align: center;"></p>
+        <div id="has-invites">
+          <button class="btn btn-primary" id="generate-btn">✨ Generate Invite Link</button>
         </div>
 
-        <div id="generated-links-section" style="display: none; margin-top: 20px;">
-          <label class="label">Your invite links (one-time use each)</label>
-          <div id="codes-list" class="codes-list"></div>
-          <div id="copy-all-container" style="display: none;">
-            <button class="btn btn-secondary" id="copy-all-btn">📋 Copy All Links</button>
-          </div>
-        </div>
+        <div id="codes-container" class="codes-list"></div>
+
+        <p id="generate-error" class="error" style="text-align: center;"></p>
       </div>
 
-      <!-- Claim View (for invitee) -->
+      <!-- Claim View (for invitees) -->
       <div id="view-claim" class="view">
         <div class="header">
-          <div class="icon">
-            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
-          </div>
+          <div class="icon">🎁</div>
           <div>
-            <div class="title">Youmio App Season 1 Invite</div>
-            <div class="subtitle">You've been invited to Youmio</div>
+            <div class="title">Youmio Season 1 Invite</div>
+            <div class="subtitle">Claim your early access</div>
           </div>
         </div>
+
         <div class="inviter-box">
           <div class="inviter-label">Invited by</div>
-          <div class="inviter-addr" id="inviter-display">0x6117...E6e8</div>
+          <div class="inviter-addr" id="inviter-display"></div>
         </div>
-        <label class="label">Your Wallet Address</label>
-        <input type="text" id="wallet-input" class="input" placeholder="0x...">
-        <p id="error-msg" class="error"></p>
-        <button class="btn" id="submit-btn">Claim Your Access</button>
-        <div class="info-box" style="margin-top: 16px;">
-          <p class="info-text">ℹ️ Season 1 is invite-only. Once allowlisted, you'll be able to earn Affinity which will unlock Youmio Ecosystem Rewards.</p>
+
+        <div class="input-group">
+          <label>Enter your wallet address to claim access</label>
+          <input type="text" id="wallet-input" placeholder="0x..." autocomplete="off" spellcheck="false">
         </div>
+
+        <button class="btn btn-primary" id="submit-btn">Claim Your Access</button>
+
+        <p class="info-text" style="margin-top: 16px; text-align: center;">Once allowlisted, you'll be able to earn Affinity which will unlock Youmio Ecosystem Rewards.</p>
+
+        <p id="claim-error" class="error" style="text-align: center;"></p>
       </div>
 
       <!-- Success View -->
-      <div id="view-success" class="view">
+      <div id="view-success" class="view" style="text-align: center;">
         <div class="success-icon">
           <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
         </div>
@@ -246,7 +547,7 @@
           <div class="inviter-label">Your wallet</div>
           <div class="inviter-addr" id="success-wallet" style="font-size: 13px; word-break: break-all;"></div>
         </div>
-        <a href="https://app.youmio.ai/" class="btn" style="text-decoration: none;">Return to Youmio App</a>
+        <a href="https://app.youmio.ai/" class="btn btn-primary" style="text-decoration: none;">Return to Youmio App</a>
       </div>
 
       <!-- Used View -->
@@ -257,12 +558,20 @@
         <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
       </div>
 
-      <!-- Invalid View -->
+      <!-- Invalid View (for bad claim codes) -->
       <div id="view-invalid" class="view" style="text-align: center;">
         <div class="status-icon error">❌</div>
         <div class="success-title">Invalid Invite</div>
         <p class="success-text">This invite link is not valid. Please check the link or request a new one.</p>
         <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
+      </div>
+
+      <!-- No Invites View (for users not in system) -->
+      <div id="view-no-invites" class="view" style="text-align: center;">
+        <div class="status-icon warning">🎟️</div>
+        <div class="success-title">You Have No Invites</div>
+        <p class="success-text">You either have no valid invites remaining or are not currently added to the invites system.</p>
+        <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio</a>
       </div>
 
       <!-- Error View -->
@@ -283,7 +592,7 @@
       <div class="modal-title">Connect Wallet</div>
       
       <div class="wallet-option" id="select-metamask">
-        <img src="https://raw.githubusercontent.com/MetaMask/brand-resources/refs/heads/master/SVG/SVG_MetaMask_Icon_Color.svg" alt="MetaMask" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%23F5841F%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-weight=%22bold%22>M</text></svg>'">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
         <div class="wallet-option-info">
           <div class="wallet-option-name">MetaMask</div>
           <div class="wallet-option-desc" id="metamask-status">Detecting...</div>
@@ -291,7 +600,7 @@
       </div>
 
       <div class="wallet-option" id="select-coinbase">
-        <img src="https://www.coinbase.com/img/favicon/favicon-256.png" alt="Coinbase" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%230052FF%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-weight=%22bold%22>C</text></svg>'">
+        <img src="https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-wallet-logo.webp" alt="Coinbase">
         <div class="wallet-option-info">
           <div class="wallet-option-name">Coinbase Wallet</div>
           <div class="wallet-option-desc" id="coinbase-status">Detecting...</div>
@@ -299,18 +608,18 @@
       </div>
 
       <div class="wallet-option" id="select-phantom">
-        <img src="https://phantom.com/img/phantom_logo_512.png" alt="Phantom" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%235346b4%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-weight=%22bold%22>P</text></svg>'">
+        <img src="https://phantom.app/img/phantom-logo.svg" alt="Phantom">
         <div class="wallet-option-info">
           <div class="wallet-option-name">Phantom</div>
           <div class="wallet-option-desc" id="phantom-status">Detecting...</div>
         </div>
       </div>
 
-      <div class="wallet-option" id="select-rabby">
-        <img src="https://rabby.io/assets/images/logo-rabby.svg" alt="Rabby" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%238697FF%22 width=%2240%22 height=%2240%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-weight=%22bold%22>R</text></svg>'">
+      <div class="wallet-option" id="select-trust">
+        <img src="https://trustwallet.com/assets/images/media/assets/TWT.svg" alt="Trust Wallet">
         <div class="wallet-option-info">
-          <div class="wallet-option-name">Rabby Wallet</div>
-          <div class="wallet-option-desc" id="rabby-status">Detecting...</div>
+          <div class="wallet-option-name">Trust Wallet</div>
+          <div class="wallet-option-desc" id="trust-status">Detecting...</div>
         </div>
       </div>
 
@@ -340,7 +649,7 @@
       metamask: { provider: null, detected: false },
       coinbase: { provider: null, detected: false },
       phantom: { provider: null, detected: false },
-      rabby: { provider: null, detected: false },
+      trust: { provider: null, detected: false },
       injected: { provider: null, detected: false }
     };
 
@@ -350,12 +659,12 @@
         wallets.metamask.provider = window.ethereum.providers.find(function(p) { return p.isMetaMask && !p.isBraveWallet; });
         wallets.coinbase.provider = window.ethereum.providers.find(function(p) { return p.isCoinbaseWallet; });
         wallets.phantom.provider = window.ethereum.providers.find(function(p) { return p.isPhantom; });
-        wallets.rabby.provider = window.ethereum.providers.find(function(p) { return p.isRabby; });
+        wallets.trust.provider = window.ethereum.providers.find(function(p) { return p.isTrust || p.isTrustWallet; });
       } else if (window.ethereum) {
         if (window.ethereum.isMetaMask && !window.ethereum.isBraveWallet) wallets.metamask.provider = window.ethereum;
         if (window.ethereum.isCoinbaseWallet) wallets.coinbase.provider = window.ethereum;
         if (window.ethereum.isPhantom) wallets.phantom.provider = window.ethereum;
-        if (window.ethereum.isRabby) wallets.rabby.provider = window.ethereum;
+        if (window.ethereum.isTrust || window.ethereum.isTrustWallet) wallets.trust.provider = window.ethereum;
       }
 
       // Phantom also on window.phantom.ethereum
@@ -368,25 +677,29 @@
       if (window.ethereum) wallets.injected.provider = window.ethereum;
 
       // Update UI
-      updateWalletStatus('metamask');
-      updateWalletStatus('coinbase');
-      updateWalletStatus('phantom');
-      updateWalletStatus('rabby');
+      updateWalletStatus('metamask', wallets.metamask.provider);
+      updateWalletStatus('coinbase', wallets.coinbase.provider);
+      updateWalletStatus('phantom', wallets.phantom.provider);
+      updateWalletStatus('trust', wallets.trust.provider);
 
       // Show "Other" only if no specific wallet detected but ethereum exists
-      var hasSpecific = wallets.metamask.provider || wallets.coinbase.provider || wallets.phantom.provider || wallets.rabby.provider;
+      var hasSpecific = wallets.metamask.provider || wallets.coinbase.provider || wallets.phantom.provider || wallets.trust.provider;
       if (!hasSpecific && wallets.injected.provider) {
         document.getElementById('select-injected').style.display = 'flex';
+      } else if (!wallets.injected.provider) {
+        document.getElementById('select-injected').classList.add('disabled');
+      } else {
+        document.getElementById('select-injected').style.display = 'none';
       }
     }
 
-    function updateWalletStatus(id) {
+    function updateWalletStatus(id, provider) {
       var el = document.getElementById('select-' + id);
       var statusEl = document.getElementById(id + '-status');
       
-      if (wallets[id].provider) {
+      if (provider) {
         statusEl.textContent = 'Available';
-        statusEl.classList.add('available');
+        statusEl.style.color = '#4ade80';
         wallets[id].detected = true;
       } else {
         statusEl.textContent = 'Not detected';
@@ -403,68 +716,56 @@
     }
 
     async function connectWithProvider(provider) {
-      if (!provider) return;
-      
+      if (!provider) {
+        document.getElementById('verify-error').textContent = 'Wallet not available';
+        document.getElementById('verify-error').classList.add('show');
+        return;
+      }
+
       hideModal();
       var btn = document.getElementById('connect-wallet-btn');
       var errorEl = document.getElementById('verify-error');
       errorEl.classList.remove('show');
 
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner">⏳</span> Connecting...';
+      btn.innerHTML = '<span>Connecting...</span>';
 
       try {
         var accounts = await provider.request({ method: 'eth_requestAccounts' });
-        
-        if (!accounts || accounts.length === 0) {
-          throw new Error('No accounts returned');
+        var connectedAddress = accounts[0];
+
+        if (connectedAddress.toLowerCase() !== inviterWallet.toLowerCase()) {
+          errorEl.textContent = 'Wrong wallet connected. Please connect: ' + inviterWallet.slice(0, 6) + '...' + inviterWallet.slice(-4);
+          errorEl.classList.add('show');
+          btn.disabled = false;
+          btn.innerHTML = '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg> Connect Wallet & Sign';
+          return;
         }
 
-        var connectedWallet = accounts[0].toLowerCase();
-        var requiredWallet = inviterWallet.toLowerCase();
+        btn.innerHTML = '<span>Sign message...</span>';
 
-        if (connectedWallet !== requiredWallet) {
-          throw new Error('Wrong wallet connected.\n\nConnected: ' + connectedWallet.slice(0,6) + '...' + connectedWallet.slice(-4) + '\nRequired: ' + requiredWallet.slice(0,6) + '...' + requiredWallet.slice(-4) + '\n\nPlease switch to the correct wallet.');
-        }
-
-        btn.innerHTML = '<span class="spinner">⏳</span> Sign message in wallet...';
-
-        var timestamp = Math.floor(Date.now() / 1000);
-        var message = 'Youmio Season 1 Invite Verification\n\nI am verifying ownership of this wallet to generate invite links.\n\nWallet: ' + inviterWallet.slice(0, 6) + '...' + inviterWallet.slice(-4) + '\nTimestamp: ' + timestamp;
-
-        var signature = await provider.request({
-          method: 'personal_sign',
-          params: [message, connectedWallet]
-        });
-
-        walletSignature = signature;
-        signedMessage = message;
-
-        console.log('Wallet verified, signature stored');
-
-        // Load any existing codes for this wallet
-        await loadExistingCodes();
-
-        // Show share view
-        document.getElementById('invite-count').textContent = invitesRemaining + '/5 Invites Remaining';
+        signedMessage = 'Verify wallet ownership for Youmio Invites\n\nWallet: ' + inviterWallet + '\nTimestamp: ' + Date.now();
         
-        // Only hide generate button if NO invites remaining
+        var ethersProvider = new ethers.BrowserProvider(provider);
+        var signer = await ethersProvider.getSigner();
+        walletSignature = await signer.signMessage(signedMessage);
+
+        document.getElementById('invite-count').textContent = invitesRemaining + ' invites remaining';
+        
         if (invitesRemaining <= 0) {
-          document.getElementById('no-invites').style.display = 'block';
-          document.getElementById('generate-section').style.display = 'none';
-        } else {
-          document.getElementById('no-invites').style.display = 'none';
-          document.getElementById('generate-section').style.display = 'block';
+          document.getElementById('no-invites-msg').style.display = 'block';
+          document.getElementById('has-invites').style.display = 'none';
         }
-        
+
+        await loadExistingCodes();
         showView('share');
 
       } catch (err) {
-        console.error('Wallet connection error:', err);
+        console.error('Wallet error:', err);
         if (err.code === 4001) {
-          errorEl.textContent = 'You rejected the request. Please try again.';
+          errorEl.textContent = 'Request cancelled. Please try again.';
         } else {
-          errorEl.textContent = err.message || 'Failed to connect wallet. Please try again.';
+          errorEl.textContent = err.message || 'Failed to connect. Please try again.';
         }
         errorEl.classList.add('show');
       }
@@ -483,7 +784,7 @@
     }
 
     function showView(viewName) {
-      var views = ['loading', 'verify', 'share', 'claim', 'success', 'used', 'invalid', 'error'];
+      var views = ['loading', 'verify', 'share', 'claim', 'success', 'used', 'invalid', 'error', 'no-invites'];
       views.forEach(function(v) {
         var el = document.getElementById('view-' + v);
         if (el) el.classList.remove('active');
@@ -494,7 +795,6 @@
 
     async function init() {
       var page = getPageType();
-      console.log('Page type:', page);
       
       if (page.type === 'share') {
         inviterWallet = page.wallet;
@@ -503,21 +803,16 @@
         detectWallets();
         
         try {
-          console.log('Checking invite for:', inviterWallet);
           var response = await fetch('/.netlify/functions/check-invite?inviter=' + inviterWallet);
-          console.log('Response status:', response.status);
           var data = await response.json();
-          console.log('Response data:', data);
-          
           if (data.valid) {
             invitesRemaining = data.invitesRemaining;
             showView('verify');
           } else {
-            console.log('Invalid response, reason:', data.reason);
-            showView('invalid');
+            // Show "no invites" for users not in system or out of invites
+            showView('no-invites');
           }
         } catch (err) {
-          console.error('Error checking invite:', err);
           showView('error');
         }
       } else if (page.type === 'claim') {
@@ -525,26 +820,6 @@
         await loadClaimView();
       } else {
         showView('invalid');
-      }
-    }
-
-    async function loadExistingCodes() {
-      try {
-        var response = await fetch('/.netlify/functions/get-codes?inviter=' + inviterWallet);
-        var data = await response.json();
-        
-        if (data.success && data.codes && data.codes.length > 0) {
-          generatedCodes = data.codes;
-          displayGeneratedCodes();
-          document.getElementById('generated-links-section').style.display = 'block';
-          
-          if (generatedCodes.length > 1) {
-            document.getElementById('copy-all-container').style.display = 'block';
-          }
-        }
-      } catch (err) {
-        console.error('Error loading existing codes:', err);
-        // Not critical, just means no existing codes to show
       }
     }
 
@@ -565,25 +840,62 @@
       }
     }
 
+    async function loadExistingCodes() {
+      try {
+        var response = await fetch('/.netlify/functions/get-codes?inviter=' + inviterWallet);
+        var data = await response.json();
+        if (data.codes && data.codes.length > 0) {
+          generatedCodes = data.codes;
+          renderCodes();
+        }
+      } catch (err) {
+        console.error('Error loading codes:', err);
+      }
+    }
+
+    function renderCodes() {
+      var container = document.getElementById('codes-container');
+      if (generatedCodes.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+
+      var html = '<div style="font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 10px;">Your invite links:</div>';
+      generatedCodes.forEach(function(code, index) {
+        var link = 'https://invite.youmio.ai/claim/' + code.code;
+        var status = code.used ? '<span style="color: #f87171;">Used</span>' : '<span style="color: #4ade80;">Active</span>';
+        html += '<div class="code-item">' +
+          '<div class="code-link">' + link + '</div>' +
+          '<div style="font-size: 11px; margin-right: 8px;">' + status + '</div>' +
+          '<button class="code-copy" onclick="copyCode(\'' + link + '\', this)">Copy</button>' +
+        '</div>';
+      });
+      container.innerHTML = html;
+    }
+
+    function copyCode(link, btn) {
+      navigator.clipboard.writeText(link);
+      btn.textContent = '✓';
+      btn.classList.add('copied');
+      setTimeout(function() {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    }
+
     async function generateCode() {
       var btn = document.getElementById('generate-btn');
       var errorEl = document.getElementById('generate-error');
       errorEl.classList.remove('show');
 
       if (!walletSignature) {
-        errorEl.textContent = 'Signature missing. Please refresh and verify again.';
-        errorEl.classList.add('show');
-        return;
-      }
-
-      if (invitesRemaining <= 0) {
-        errorEl.textContent = 'No invites remaining.';
+        errorEl.textContent = 'Please verify your wallet first.';
         errorEl.classList.add('show');
         return;
       }
 
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner">⏳</span> Generating...';
+      btn.textContent = 'Generating...';
 
       try {
         var response = await fetch('/.netlify/functions/generate-code', {
@@ -598,128 +910,61 @@
 
         var data = await response.json();
 
-        if (data.success && data.code) {
-          generatedCodes.push(data.code);
+        if (data.success) {
+          generatedCodes.unshift({ code: data.code, used: false });
+          renderCodes();
           invitesRemaining = data.invitesRemaining;
+          document.getElementById('invite-count').textContent = invitesRemaining + ' invites remaining';
           
-          // Update UI
-          displayGeneratedCodes();
-          document.getElementById('generated-links-section').style.display = 'block';
-          document.getElementById('invite-count').textContent = invitesRemaining + '/5 Invites Remaining';
-          
-          // Show "Copy All" only if more than one code
-          if (generatedCodes.length > 1) {
-            document.getElementById('copy-all-container').style.display = 'block';
-          }
-          
-          // Hide generate button if no invites left
           if (invitesRemaining <= 0) {
-            document.getElementById('generate-section').style.display = 'none';
+            document.getElementById('no-invites-msg').style.display = 'block';
+            document.getElementById('has-invites').style.display = 'none';
           }
-        } else if (data.error === 'Signature expired, please sign again') {
-          // Signature expired, need to re-sign
-          errorEl.textContent = 'Session expired. Please re-verify your wallet.';
-          errorEl.classList.add('show');
-          walletSignature = '';
-          signedMessage = '';
-          setTimeout(function() {
-            showView('verify');
-          }, 2000);
         } else {
-          errorEl.textContent = data.error || 'Failed to generate code. Please try again.';
+          errorEl.textContent = data.error || 'Failed to generate invite.';
           errorEl.classList.add('show');
         }
       } catch (err) {
-        console.error('Error generating code:', err);
+        console.error('Error generating:', err);
         errorEl.textContent = 'Network error. Please try again.';
         errorEl.classList.add('show');
       }
 
       btn.disabled = false;
-      btn.innerHTML = '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Generate Invite Link';
-    }
-
-    function displayGeneratedCodes() {
-      var container = document.getElementById('codes-list');
-      container.innerHTML = '';
-
-      generatedCodes.forEach(function(code, index) {
-        var link = window.location.origin + '/claim/' + code;
-        var div = document.createElement('div');
-        div.className = 'code-row';
-        div.innerHTML = '<div class="code-number">#' + (index + 1) + '</div>' +
-          '<div class="code-link">' + link + '</div>' +
-          '<button class="btn-copy-small" onclick="copySpecificLink(' + index + ', this)">📋</button>' +
-          '<button class="btn-twitter-small" onclick="shareSpecificLink(' + index + ')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></button>';
-        container.appendChild(div);
-      });
-    }
-
-    function copySpecificLink(index, btn) {
-      var link = window.location.origin + '/claim/' + generatedCodes[index];
-      navigator.clipboard.writeText(link);
-      btn.textContent = '✓';
-      btn.classList.add('copied');
-      setTimeout(function() {
-        btn.textContent = '📋';
-        btn.classList.remove('copied');
-      }, 1500);
-    }
-
-    function shareSpecificLink(index) {
-      var link = window.location.origin + '/claim/' + generatedCodes[index];
-      var text = encodeURIComponent("I'm in Youmio Season 1! 🚀\n\nJoin me and start earning Affinity before it's too late.\n\nClaim your invite:");
-      var url = encodeURIComponent(link);
-      window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
-    }
-
-    function copyAllLinks() {
-      var allLinks = generatedCodes.map(function(code) {
-        return window.location.origin + '/claim/' + code;
-      }).join('\n');
-      navigator.clipboard.writeText(allLinks);
-      var btn = document.getElementById('copy-all-btn');
-      btn.textContent = '✓ Copied All!';
-      setTimeout(function() {
-        btn.textContent = '📋 Copy All Links';
-      }, 2000);
-    }
-
-    function shareTwitter() {
-      var link = generatedCodes.length > 0 ? window.location.origin + '/claim/' + generatedCodes[0] : '';
-      var text = encodeURIComponent("I'm in Youmio Season 1! Join me and start earning Affinity 🚀");
-      var url = encodeURIComponent(link);
-      window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
+      btn.textContent = '✨ Generate Invite Link';
     }
 
     async function submitWallet() {
       var walletInput = document.getElementById('wallet-input');
-      var errorMsg = document.getElementById('error-msg');
       var submitBtn = document.getElementById('submit-btn');
+      var errorEl = document.getElementById('claim-error');
       var wallet = walletInput.value.trim();
 
-      errorMsg.classList.remove('show');
+      errorEl.classList.remove('show');
 
       if (!wallet) {
-        errorMsg.textContent = 'Please enter your wallet address';
-        errorMsg.classList.add('show');
+        errorEl.textContent = 'Please enter your wallet address.';
+        errorEl.classList.add('show');
         return;
       }
 
       if (!/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
-        errorMsg.textContent = 'Please enter a valid Ethereum wallet address';
-        errorMsg.classList.add('show');
+        errorEl.textContent = 'Invalid wallet address format.';
+        errorEl.classList.add('show');
         return;
       }
 
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner">⏳</span> Submitting...';
+      submitBtn.textContent = 'Claiming...';
 
       try {
         var response = await fetch('/.netlify/functions/claim-code', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: currentCode, wallet: wallet })
+          body: JSON.stringify({
+            code: currentCode,
+            invitee: wallet
+          })
         });
 
         var data = await response.json();
@@ -728,12 +973,26 @@
           document.getElementById('success-wallet').textContent = wallet;
           showView('success');
         } else {
-          errorMsg.textContent = data.error || 'Something went wrong. Please try again.';
-          errorMsg.classList.add('show');
+          if (data.reason === 'already_used') {
+            showView('used');
+          } else if (data.reason === 'already_invited') {
+            errorEl.textContent = 'This wallet has already been invited.';
+            errorEl.classList.add('show');
+          } else if (data.reason === 'already_allowlisted') {
+            errorEl.textContent = 'This wallet is already on the allowlist.';
+            errorEl.classList.add('show');
+          } else if (data.reason === 'self_invite') {
+            errorEl.textContent = 'You cannot invite yourself.';
+            errorEl.classList.add('show');
+          } else {
+            errorEl.textContent = data.error || 'Failed to claim. Please try again.';
+            errorEl.classList.add('show');
+          }
         }
       } catch (err) {
-        errorMsg.textContent = 'Network error. Please try again.';
-        errorMsg.classList.add('show');
+        console.error('Error:', err);
+        errorEl.textContent = 'Network error. Please try again.';
+        errorEl.classList.add('show');
       }
 
       submitBtn.disabled = false;
@@ -756,20 +1015,20 @@
     document.getElementById('select-phantom').addEventListener('click', function() {
       if (wallets.phantom.provider) connectWithProvider(wallets.phantom.provider);
     });
-    document.getElementById('select-rabby').addEventListener('click', function() {
-      if (wallets.rabby.provider) connectWithProvider(wallets.rabby.provider);
+    document.getElementById('select-trust').addEventListener('click', function() {
+      if (wallets.trust.provider) connectWithProvider(wallets.trust.provider);
     });
     document.getElementById('select-injected').addEventListener('click', function() {
       if (wallets.injected.provider) connectWithProvider(wallets.injected.provider);
     });
 
     document.getElementById('generate-btn').addEventListener('click', generateCode);
-    document.getElementById('copy-all-btn').addEventListener('click', copyAllLinks);
     document.getElementById('submit-btn').addEventListener('click', submitWallet);
     document.getElementById('wallet-input').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') submitWallet();
     });
 
+    // Initialize
     init();
   </script>
 </body>
