@@ -68,6 +68,41 @@
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); }
     .btn-secondary:hover { background: rgba(255,255,255,0.15); filter: none; }
+    
+    /* Enticing Return Button */
+    .btn-return {
+      background: linear-gradient(135deg, rgba(236,72,153,0.3), rgba(168,85,247,0.3));
+      border: 1px solid rgba(236,72,153,0.4);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    .btn-return::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      animation: shimmer 2.5s ease-in-out infinite;
+    }
+    .btn-return:hover {
+      background: linear-gradient(135deg, rgba(236,72,153,0.5), rgba(168,85,247,0.5));
+      border-color: rgba(236,72,153,0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(236,72,153,0.3);
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(236,72,153,0.2), 0 0 30px rgba(168,85,247,0.1); }
+      50% { box-shadow: 0 0 25px rgba(236,72,153,0.4), 0 0 50px rgba(168,85,247,0.2); }
+    }
+    @keyframes shimmer {
+      0% { left: -100%; }
+      50%, 100% { left: 100%; }
+    }
     .btn-wallet { background: linear-gradient(135deg, #8b5cf6, #6366f1); }
     
     .link-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 14px; margin-bottom: 16px; }
@@ -162,12 +197,12 @@
       <div id="view-not-on-list" class="view" style="text-align: center;">
         <div class="status-icon locked">🔒</div>
         <div class="success-title">Not on the Invite List</div>
-        <p class="success-text">Your wallet address is not on the list of addresses granted invites for Season 1.</p>
+        <p class="success-text">Your wallet address is not on the list of addresses granted invites for Season 1... <em style="color: #f9a8d4;">Yet</em></p>
         <div class="inviter-box" style="margin-bottom: 20px;">
           <div class="inviter-label">Wallet checked</div>
           <div class="inviter-addr" id="not-on-list-wallet"></div>
         </div>
-        <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio</a>
+        <a href="https://app.youmio.ai/" class="btn btn-return" style="text-decoration: none;">Return to Youmio</a>
       </div>
 
       <!-- Verify Wallet View -->
@@ -279,7 +314,7 @@
         <div class="status-icon warning">⚠️</div>
         <div class="success-title">Invite Already Used</div>
         <p class="success-text">This invite link has already been claimed. Ask your friend for a new invite link.</p>
-        <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
+        <a href="https://app.youmio.ai/" class="btn btn-return" style="text-decoration: none;">Return to Youmio</a>
       </div>
 
       <!-- Invalid View (for bad claim codes only) -->
@@ -287,7 +322,7 @@
         <div class="status-icon error">❌</div>
         <div class="success-title">Invalid Invite Code</div>
         <p class="success-text">This invite code is not valid. Please check the link or request a new one from your friend.</p>
-        <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
+        <a href="https://app.youmio.ai/" class="btn btn-return" style="text-decoration: none;">Return to Youmio</a>
       </div>
 
       <!-- Error View -->
@@ -295,7 +330,7 @@
         <div class="status-icon error">⚠️</div>
         <div class="success-title">Something Went Wrong</div>
         <p class="success-text">Please try again later or contact support.</p>
-        <a href="https://app.youmio.ai/" class="btn btn-secondary" style="text-decoration: none;">Return to Youmio App</a>
+        <a href="https://app.youmio.ai/" class="btn btn-return" style="text-decoration: none;">Return to Youmio</a>
       </div>
     </div>
 
